@@ -1,7 +1,45 @@
 <script lang="ts">
+  import QrScanner from 'qr-scanner';
+
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+
+  /** @type {HTMLVideoElement} */
+  let scannerVideo;
+  let qrScanner;
+
+  // use $effect so we can wait until scanner-video is created
+	$effect(() => {
+    // To enforce the use of the new api with detailed scan results, call the constructor with an options object, see below.
+    qrScanner = new QrScanner(
+        scannerVideo,
+        result => console.log('decoded qr code:', result),
+        {
+          maxScansPerSecond: 1,
+
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          // TODO: custom pokedex css
+          // overlay: someDivReference
+        },
+    );
+	});
+
+  let scannerEnabled: boolean = $state(false)
+  const toggleScanner = () => {
+    if (!qrScanner) {
+      console.error('qr scanner not ready!');
+      return;
+    }
+
+    scannerEnabled = !scannerEnabled;
+    if (scannerEnabled) {
+      qrScanner.start();
+    } else {
+      qrScanner.stop();
+    }
+  };
+
 </script>
 
 <main>
@@ -16,7 +54,10 @@
   <h1>Vite + Svelte</h1>
 
   <div class="card">
-    <Counter />
+    <video bind:this={scannerVideo}></video>
+    <button onclick={toggleScanner}>
+      {scannerEnabled ? 'scan off' : 'scan on!'}
+    </button>
   </div>
 
   <p>
