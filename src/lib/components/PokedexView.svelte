@@ -15,8 +15,8 @@
     {#each tabs as tab, index}
       <div
         class="tab"
-        class:active={index === tabCursor}
-        class:focused={inTabBar}
+        class:active={activeTab === tabs[index].toLowerCase()}
+        class:selected={index === tabCursor && inTabBar}
       >
         {tab}
       </div>
@@ -47,7 +47,7 @@
   }
 
   .tab {
-    padding: 4px 0;
+    padding: 4px 8px;
     font-size: 10px;
     text-align: left;
     opacity: 0.5;
@@ -60,9 +60,8 @@
     border-bottom-color: var(--screen-text);
   }
 
-  .tab.active.focused {
-    opacity: 1;
-    color: var(--screen-bg-dark);
+  .tab.selected {
+    background: rgba(15, 56, 15, 0.4);
   }
 
   .tab-content {

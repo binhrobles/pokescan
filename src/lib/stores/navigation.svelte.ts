@@ -79,13 +79,18 @@ function handlePokedex(action: InputAction): void {
     switch (action) {
       case 'left':
         tabCursor = Math.max(0, tabCursor - 1);
-        pokedexTab = POKEDEX_TABS[tabCursor];
         break;
       case 'right':
         tabCursor = Math.min(POKEDEX_TABS.length - 1, tabCursor + 1);
+        break;
+      case 'a-button':
+        // Activate the selected tab
         pokedexTab = POKEDEX_TABS[tabCursor];
+        inTabBar = false;
         break;
       case 'down':
+        // Switch to the selected tab when leaving tab bar
+        pokedexTab = POKEDEX_TABS[tabCursor];
         inTabBar = false;
         break;
       case 'b-button':
