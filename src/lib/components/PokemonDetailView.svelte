@@ -89,6 +89,7 @@
       </div>
     {/if}
 
+    <div class="hint">Press B to go back</div>
   </div>
 {:else}
   <div class="detail-view">
@@ -103,20 +104,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 20px;
+    padding: 12px;
     gap: 8px;
   }
 
   .header {
-    width: 100%;
     text-align: center;
-    position: relative;
   }
 
   .id {
-    position: absolute;
-    left: 0;
-    top: 0;
     font-size: 10px;
     opacity: 0.7;
   }
@@ -224,6 +220,12 @@
   .not-caught {
     font-size: 10px;
     opacity: 0.5;
+  }
+
+  .hint {
+    font-size: 6px;
+    opacity: 0.5;
+    margin-top: auto;
   }
 
   .error {
