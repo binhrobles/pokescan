@@ -9,6 +9,7 @@
   import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode, setGridCursor } from './lib/stores/navigation.svelte';
   import { loadPokedex, recordCatch, getCaughtIds, findPokemonByBarcode } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
+  import { initAudio } from './lib/services/sound';
   import type { InputAction } from './lib/types/pokemon';
 
   // Initialize pokedex store on mount
@@ -17,6 +18,9 @@
   });
 
   function handleInput(action: InputAction) {
+    // Initialize audio on first user interaction
+    initAudio();
+
     dispatch(action);
   }
 
