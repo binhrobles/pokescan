@@ -4,8 +4,10 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: '/pokescan/',
+export default defineConfig(({ command }) => ({
+  // Only use /pokescan/ base path for production builds (GitHub Pages)
+  // Use / for local development
+  base: command === 'build' ? '/pokescan/' : '/',
   plugins: [
     svelte(),
     basicSsl(),
@@ -62,4 +64,4 @@ export default defineConfig({
   server: {
     https: true,
   },
-})
+}))
