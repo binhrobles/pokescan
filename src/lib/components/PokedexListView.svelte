@@ -1,10 +1,21 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
-  import { getListCursor } from '../stores/navigation.svelte';
+  import { getListCursor, selectListPokemon } from '../stores/navigation.svelte';
   import { getSpritePath } from '../utils/paths';
 
   const pokemon = $derived(getAllPokemon());
   const cursor = $derived(getListCursor());
+
+  function handleListItemClick(index: number) {
+    selectListPokemon(index);
+  }
+
+  function handleListItemKeydown(event: KeyboardEvent, index: number) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectListPokemon(index);
+    }
+  }
 
   // Scroll the cursor into view when it changes
   let listContainer: HTMLDivElement | undefined = $state();
@@ -24,6 +35,10 @@
       class="list-item"
       class:selected={index === cursor}
       data-index={index}
+      role="button"
+      tabindex="0"
+      onclick={() => handleListItemClick(index)}
+      onkeydown={(e) => handleListItemKeydown(e, index)}
     >
       <div class="pokemon-id">#{mon.id.toString().padStart(3, '0')}</div>
 
@@ -32,8 +47,10 @@
           <img
             src={getSpritePath(mon.sprite)}
             alt={mon.name}
-            on:error={(e) => {
-              e.currentTarget.style.display = 'none';
+            onerror={(e) => {
+              if (e.currentTarget instanceof HTMLImageElement) {
+                e.currentTarget.style.display = 'none';
+              }
             }}
           />
         </div>
@@ -76,6 +93,7 @@
     transition: background-color 0.1s;
     position: relative;
     min-height: 72px;
+    cursor: pointer;
   }
 
   .list-item.selected {

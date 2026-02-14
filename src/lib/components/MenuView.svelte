@@ -1,23 +1,32 @@
 <script lang="ts">
-  import { getMenuCursor, getMenuItems } from '../stores/navigation.svelte';
+  import { getMenuCursor, getMenuItems, selectMenuItem } from '../stores/navigation.svelte';
 
   const labels: Record<string, string> = {
     'scanner': 'SCAN',
     'pokedex': 'POKéDEX',
     'about': 'ABOUT',
   };
+
+  function handleMenuItemClick(index: number) {
+    selectMenuItem(index);
+  }
 </script>
 
 <div class="menu">
   <h1 class="title">POKéSCAN</h1>
-  <ul class="menu-list">
+  <div class="menu-list">
     {#each getMenuItems() as item, i}
-      <li class="menu-item" class:active={getMenuCursor() === i}>
+      <button
+        type="button"
+        class="menu-item"
+        class:active={getMenuCursor() === i}
+        onclick={() => handleMenuItemClick(i)}
+      >
         <span class="cursor">{getMenuCursor() === i ? '▶' : ' '}</span>
         {labels[item] ?? item}
-      </li>
+      </button>
     {/each}
-  </ul>
+  </div>
 </div>
 
 <style>
@@ -37,7 +46,6 @@
   }
 
   .menu-list {
-    list-style: none;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -47,6 +55,11 @@
     font-size: 14px;
     color: var(--screen-text);
     white-space: nowrap;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
   }
 
   .menu-item.active {

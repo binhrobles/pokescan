@@ -27,6 +27,7 @@ let detailReturnTo: ViewState = $state('menu');
 let menuCursor: number = $state(0);
 let gridCursor: number = $state(0);
 let gridColumns: number = $state(5); // Updated dynamically by grid view
+let listCursor: number = $state(0);
 let scannerDetectedBarcode: string | null = $state(null); // Pending barcode awaiting confirmation
 
 /** Process a d-pad or button input */
@@ -128,11 +129,46 @@ export function getGridCursor(): number {
   return gridCursor;
 }
 
+export function getListCursor(): number {
+  return listCursor;
+}
+
 export function setScannerDetectedBarcode(barcode: string | null): void {
   scannerDetectedBarcode = barcode;
 }
 
 export function getScannerDetectedBarcode(): string | null {
   return scannerDetectedBarcode;
+}
+
+// --- Touch/click navigation helpers ---
+
+/** Select and activate a menu item directly (for touch input) */
+export function selectMenuItem(index: number): void {
+  if (currentView !== 'menu') return;
+  if (index < 0 || index >= MENU_ITEMS.length) return;
+
+  menuCursor = index;
+  currentView = MENU_ITEMS[index];
+}
+
+/** Select and view a Pokemon from the grid (for touch input) */
+export function selectGridPokemon(index: number): void {
+  if (currentView !== 'pokedex') return;
+  if (index < 0 || index > 150) return;
+
+  selectedPokemonId = index + 1; // 1-indexed
+  detailReturnTo = 'pokedex';
+  currentView = 'pokemon-detail';
+}
+
+/** Select and view a Pokemon from the list (for touch input) */
+export function selectListPokemon(index: number): void {
+  if (currentView !== 'pokedex') return;
+  if (index < 0 || index > 150) return;
+
+  selectedPokemonId = index + 1; // 1-indexed
+  detailReturnTo = 'pokedex';
+  currentView = 'pokemon-detail';
 }
 

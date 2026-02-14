@@ -1,10 +1,21 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
-  import { getGridCursor, setGridColumns } from '../stores/navigation.svelte';
+  import { getGridCursor, setGridColumns, selectGridPokemon } from '../stores/navigation.svelte';
   import { getSpritePath } from '../utils/paths';
 
   const pokemon = $derived(getAllPokemon());
   const cursor = $derived(getGridCursor());
+
+  function handleGridItemClick(index: number) {
+    selectGridPokemon(index);
+  }
+
+  function handleGridItemKeydown(event: KeyboardEvent, index: number) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectGridPokemon(index);
+    }
+  }
 
   let gridContainer: HTMLDivElement | undefined = $state();
   let gridElement: HTMLDivElement | undefined = $state();
@@ -13,15 +24,16 @@
   $effect(() => {
     if (!gridElement) return;
 
+    const element = gridElement;
     const updateColumns = () => {
-      const computedStyle = window.getComputedStyle(gridElement);
+      const computedStyle = window.getComputedStyle(element);
       const columns = computedStyle.getPropertyValue('grid-template-columns').split(' ').length;
       setGridColumns(columns);
     };
 
     updateColumns();
     const resizeObserver = new ResizeObserver(updateColumns);
-    resizeObserver.observe(gridElement);
+    resizeObserver.observe(element);
 
     return () => resizeObserver.disconnect();
   });
@@ -43,14 +55,20 @@
         class="grid-item"
         class:selected={index === cursor}
         data-index={index}
+        role="button"
+        tabindex="0"
+        onclick={() => handleGridItemClick(index)}
+        onkeydown={(e) => handleGridItemKeydown(e, index)}
       >
         <img
           src={getSpritePath(mon.sprite)}
           alt={mon.caught ? mon.name : '???'}
           class="sprite"
           class:silhouette={!mon.caught}
-          on:error={(e) => {
-            e.currentTarget.style.display = 'none';
+          onerror={(e) => {
+            if (e.currentTarget instanceof HTMLImageElement) {
+              e.currentTarget.style.display = 'none';
+            }
           }}
         />
       </div>
@@ -97,6 +115,7 @@
     border-radius: 4px;
     overflow: hidden;
     transition: background-color 0.1s;
+    cursor: pointer;
   }
 
   .grid-item.selected {
