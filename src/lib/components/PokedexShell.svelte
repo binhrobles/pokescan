@@ -79,7 +79,7 @@
     max-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 0 16px 16px;
     gap: 12px;
     box-shadow:
       /* Top highlight - molded plastic edge catch light */
@@ -109,26 +109,26 @@
 
   /* Top indicator lights */
   .shell-top {
-    padding: 4px 4px 8px;
+    margin: 0 -16px 0;
     flex-shrink: 0;
   }
 
-  /* Raised bezel panel for indicators - suggests open flap design */
+  /* Raised bezel panel for indicators - full width, flush with edges */
   .indicator-bezel {
     background: linear-gradient(135deg,
       rgba(220, 38, 38, 0.15) 0%,
       rgba(220, 38, 38, 0.05) 50%,
       rgba(0, 0, 0, 0.1) 100%
     );
-    border-radius: 8px;
-    padding: 10px 12px;
-    display: inline-block;
+    border-radius: 0 0 8px 8px;
+    padding: 12px 16px;
+    width: 100%;
     box-shadow:
       /* Raised appearance */
-      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 3px 6px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.15),
       inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   }
 
   .indicator-cluster {
