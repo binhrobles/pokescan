@@ -35,18 +35,20 @@
 
     // If new barcode, use heuristic to map to a Pokémon
     if (pokemonId === undefined) {
-      const caughtIds = getCaughtIds();
-      pokemonId = barcodeToPokemon(barcodeContent, caughtIds);
+      pokemonId = barcodeToPokemon(barcodeContent);
 
-      // Record the catch
-      await recordCatch(pokemonId, barcodeContent);
+      // Only record the catch if this Pokémon hasn't been caught yet
+      const caughtIds = getCaughtIds();
+      if (!caughtIds.has(pokemonId)) {
+        await recordCatch(pokemonId, barcodeContent);
+      }
     }
 
     // Reset catch trigger and clear detected barcode
     resetScannerTriggerCatch();
     setScannerDetectedBarcode(null);
 
-    // Navigate to detail view
+    // Navigate to detail view (even if already caught)
     goToDetail(pokemonId, 'scanner');
   }
 </script>
