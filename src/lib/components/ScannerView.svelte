@@ -16,6 +16,7 @@
   let catching = $state(false);
   let error = $state<string | null>(null);
   let hasCamera = $state(false);
+  let cameraReady = $state(false);
   let detectionTimeout: number | undefined;
   let previousShouldCatch = false;
 
@@ -72,6 +73,11 @@
       // Starting the scanner will request camera permission
       await scanner.start();
       hasCamera = true;
+
+      // Wait a bit for the video stream to fully initialize to prevent visual glitches
+      setTimeout(() => {
+        cameraReady = true;
+      }, 100);
     } catch (err) {
       console.error('Scanner error:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to start scanner';
@@ -105,9 +111,13 @@
         <div class="error-hint">Please enable camera access</div>
       {/if}
     </div>
+  {:else if !cameraReady}
+    <div class="loading-message">
+      <div class="loading-text">INITIALIZING CAMERA...</div>
+    </div>
   {/if}
-  <video bind:this={videoElement} class="video-feed" playsinline></video>
-  <div class="pokeball-overlay" class:detected class:catching>
+  <video bind:this={videoElement} class="video-feed" class:ready={cameraReady} playsinline></video>
+  <div class="pokeball-overlay" class:detected class:catching class:ready={cameraReady}>
     <div class="top-half"></div>
     <div class="divider-line"></div>
     <div class="center-button"></div>
@@ -127,6 +137,12 @@
     height: 100%;
     object-fit: cover;
     filter: contrast(1.1) saturate(0.9);
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+  }
+
+  .video-feed.ready {
+    opacity: 1;
   }
 
   .pokeball-overlay {
@@ -144,6 +160,12 @@
     pointer-events: none;
     transition: all 0.2s ease-out;
     overflow: hidden;
+    opacity: 0;
+  }
+
+  .pokeball-overlay.ready {
+    opacity: 1;
+    transition: opacity 0.3s ease-in 0.1s;
   }
 
   /* Top semicircle (pokeball top half) */
@@ -275,5 +297,30 @@
     font-size: 7px;
     color: var(--screen-text);
     opacity: 0.7;
+  }
+
+  .loading-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+  }
+
+  .loading-text {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    animation: blink 1s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
   }
 </style>
