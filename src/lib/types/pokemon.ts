@@ -25,9 +25,6 @@ export type ViewState =
   | 'pokedex'
   | 'about';
 
-/** Pokedex tab types */
-export type PokedexTab = 'list' | 'grid';
-
 /** D-pad + button input events */
 export type InputAction =
   | 'up'

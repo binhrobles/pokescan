@@ -13,6 +13,7 @@
   let detected = $state(false);
   let error = $state<string | null>(null);
   let hasCamera = $state(false);
+  let scanned = $state(false); // Prevent multiple scans
 
   onMount(async () => {
     if (!videoElement) {
@@ -27,13 +28,16 @@
       scanner = new QrScanner(
         videoElement,
         (result) => {
-          // QR code detected — trigger red flash
+          // Prevent multiple scans of the same QR code
+          if (scanned) return;
+
+          scanned = true;
           detected = true;
 
           // Auto-capture after brief visual feedback
           setTimeout(() => {
+            scanner?.stop(); // Stop scanning after capture
             onScan(result.data);
-            detected = false;
           }, 300);
         },
         {

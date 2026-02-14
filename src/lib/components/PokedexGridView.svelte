@@ -82,9 +82,9 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-    gap: 8px;
-    padding: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 10px;
+    padding: 8px;
   }
 
   .grid-item {

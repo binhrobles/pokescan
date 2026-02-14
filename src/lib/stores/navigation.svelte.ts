@@ -1,4 +1,4 @@
-import type { ViewState, InputAction, PokedexTab } from '../types/pokemon';
+import type { ViewState, InputAction } from '../types/pokemon';
 
 /**
  * Navigation state machine for the Pokédex.
@@ -10,7 +10,7 @@ import type { ViewState, InputAction, PokedexTab } from '../types/pokemon';
  *   menu ──a──→ scanner | pokedex | about
  *   scanner ──b──→ menu
  *   scanner ──(auto-catch)──→ pokemon-detail
- *   pokedex ──up──→ switch tabs (list ↔ grid)
+ *   pokedex ──d-pad──→ navigate grid
  *   pokedex ──a──→ pokemon-detail (from cursor position)
  *   pokedex ──b──→ menu
  *   pokemon-detail ──b──→ (return to caller)
@@ -18,7 +18,6 @@ import type { ViewState, InputAction, PokedexTab } from '../types/pokemon';
  */
 
 const MENU_ITEMS: ViewState[] = ['scanner', 'pokedex', 'about'];
-const POKEDEX_TABS: PokedexTab[] = ['list', 'grid'];
 
 // --- Svelte 5 runes state ---
 
@@ -26,17 +25,8 @@ let currentView: ViewState = $state('menu');
 let selectedPokemonId: number | null = $state(null);
 let detailReturnTo: ViewState = $state('menu');
 let menuCursor: number = $state(0);
-let listCursor: number = $state(0);
 let gridCursor: number = $state(0);
 let gridColumns: number = $state(5); // Updated dynamically by grid view
-let pokedexTab: PokedexTab = $state('list');
-let tabCursor: number = $state(0); // 0 = list, 1 = grid
-let inTabBar: boolean = $state(false); // true when focus is on tab bar
-
-// Fast scroll tracking for held d-pad
-let lastScrollTime = 0;
-const FAST_SCROLL_THRESHOLD = 150; // ms - if inputs come faster than this, enable fast scroll
-const FAST_SCROLL_AMOUNT = 5; // scroll 5 items at a time when fast scrolling
 
 /** Process a d-pad or button input */
 export function dispatch(action: InputAction): void {
@@ -48,7 +38,7 @@ export function dispatch(action: InputAction): void {
       if (action === 'b-button') currentView = 'menu';
       break;
     case 'pokedex':
-      handlePokedex(action);
+      handlePokedexGrid(action);
       break;
     case 'pokemon-detail':
       if (action === 'b-button') currentView = detailReturnTo;
@@ -73,72 +63,7 @@ function handleMenu(action: InputAction): void {
   }
 }
 
-function handlePokedex(action: InputAction): void {
-  // Handle tab bar navigation
-  if (inTabBar) {
-    switch (action) {
-      case 'left':
-        tabCursor = Math.max(0, tabCursor - 1);
-        break;
-      case 'right':
-        tabCursor = Math.min(POKEDEX_TABS.length - 1, tabCursor + 1);
-        break;
-      case 'a-button':
-        // Activate the selected tab
-        pokedexTab = POKEDEX_TABS[tabCursor];
-        inTabBar = false;
-        break;
-      case 'down':
-        // Switch to the selected tab when leaving tab bar
-        pokedexTab = POKEDEX_TABS[tabCursor];
-        inTabBar = false;
-        break;
-      case 'b-button':
-        currentView = 'menu';
-        break;
-    }
-    return;
-  }
-
-  // Handle content navigation based on active tab
-  if (pokedexTab === 'list') {
-    handlePokedexListContent(action);
-  } else {
-    handlePokedexGridContent(action);
-  }
-}
-
-function handlePokedexListContent(action: InputAction): void {
-  const now = Date.now();
-  const isFastScroll = now - lastScrollTime < FAST_SCROLL_THRESHOLD;
-  const scrollAmount = isFastScroll ? FAST_SCROLL_AMOUNT : 1;
-
-  switch (action) {
-    case 'up':
-      // First up goes to tab bar
-      if (listCursor === 0) {
-        inTabBar = true;
-      } else {
-        listCursor = Math.max(0, listCursor - scrollAmount);
-        lastScrollTime = now;
-      }
-      break;
-    case 'down':
-      listCursor = Math.min(150, listCursor + scrollAmount);
-      lastScrollTime = now;
-      break;
-    case 'a-button':
-      selectedPokemonId = listCursor + 1; // 1-indexed
-      detailReturnTo = 'pokedex';
-      currentView = 'pokemon-detail';
-      break;
-    case 'b-button':
-      currentView = 'menu';
-      break;
-  }
-}
-
-function handlePokedexGridContent(action: InputAction): void {
+function handlePokedexGrid(action: InputAction): void {
   const maxCursor = 150; // 0-150 for 151 pokemon
 
   switch (action) {
@@ -195,26 +120,10 @@ export function getMenuCursor(): number {
   return menuCursor;
 }
 
-export function getListCursor(): number {
-  return listCursor;
-}
-
 export function getMenuItems(): ViewState[] {
   return MENU_ITEMS;
 }
 
-export function getPokedexTab(): PokedexTab {
-  return pokedexTab;
-}
-
 export function getGridCursor(): number {
   return gridCursor;
-}
-
-export function getTabCursor(): number {
-  return tabCursor;
-}
-
-export function isInTabBar(): boolean {
-  return inTabBar;
 }
