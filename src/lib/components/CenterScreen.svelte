@@ -6,13 +6,6 @@
 
 <div class="screen-container">
   <div class="screen-bezel">
-    <!-- Decorative vent lines (top-left) -->
-    <div class="vent-lines top-left">
-      <div class="vent-line"></div>
-      <div class="vent-line"></div>
-      <div class="vent-line"></div>
-    </div>
-
     <!-- Decorative screw holes -->
     <div class="screw top-left"></div>
     <div class="screw top-right"></div>
@@ -53,26 +46,6 @@
       inset 0 2px 4px rgba(255, 255, 255, 0.9),
       inset 0 -2px 6px rgba(0, 0, 0, 0.15);
     border: 2px solid #c0c0c0;
-  }
-
-  /* Decorative vent lines */
-  .vent-lines {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .vent-lines.top-left {
-    top: 8px;
-    left: 8px;
-  }
-
-  .vent-line {
-    width: 16px;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
   /* Decorative screws in corners */
