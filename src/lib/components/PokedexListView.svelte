@@ -38,8 +38,7 @@
         </div>
         <div class="pokemon-name">{mon.name.toUpperCase()}</div>
       {:else}
-        <div class="pokemon-sprite unknown">?</div>
-        <div class="pokemon-name unknown">?</div>
+        <div class="pokemon-sprite unknown">???</div>
       {/if}
     </div>
   {/each}
@@ -72,9 +71,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 6px 8px;
+    padding: 6px 20px;
     margin-bottom: 4px;
     transition: background-color 0.1s;
+    position: relative;
   }
 
   .list-item.selected {
@@ -85,6 +85,8 @@
     font-size: 10px;
     width: 40px;
     flex-shrink: 0;
+    position: absolute;
+    left: 20px;
   }
 
   .pokemon-sprite {
@@ -95,6 +97,9 @@
     align-items: center;
     justify-content: center;
     font-size: 16px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .pokemon-sprite img {
@@ -109,10 +114,11 @@
 
   .pokemon-name {
     font-size: 12px;
-    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    position: absolute;
+    right: 20px;
   }
 
   .pokemon-name.unknown {

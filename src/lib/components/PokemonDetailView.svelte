@@ -89,7 +89,6 @@
       </div>
     {/if}
 
-    <div class="hint">Press B to go back</div>
   </div>
 {:else}
   <div class="detail-view">
@@ -220,12 +219,6 @@
   .not-caught {
     font-size: 10px;
     opacity: 0.5;
-  }
-
-  .hint {
-    font-size: 6px;
-    opacity: 0.5;
-    margin-top: auto;
   }
 
   .error {
