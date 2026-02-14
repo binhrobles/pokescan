@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 6px;
   }
 
   .message {
@@ -48,7 +48,7 @@
     color: var(--screen-text);
     text-align: right;
     width: 100%;
-    margin: 0;
+    margin-bottom: 24px;
     padding-right: 20px;
   }
 
