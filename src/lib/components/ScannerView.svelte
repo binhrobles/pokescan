@@ -13,10 +13,10 @@
   let scanner: QrScanner | undefined = $state();
   let detected = $state(false);
   let catching = $state(false);
+  let catchInProgress = $state(false);
   let error = $state<string | null>(null);
   let hasCamera = $state(false);
   let cameraReady = $state(false);
-  let detectionTimeout: number | undefined;
   let autoCatchTimeout: number | undefined;
 
   onMount(async () => {
@@ -36,13 +36,9 @@
           detected = true;
           onDetect(result.data);
 
-          // Clear any existing timeouts
-          if (detectionTimeout) {
-            clearTimeout(detectionTimeout);
-          }
-          if (autoCatchTimeout) {
-            clearTimeout(autoCatchTimeout);
-          }
+          // Only start catch process once per detection
+          if (catchInProgress) return;
+          catchInProgress = true;
 
           // Auto-catch after delay (enough time to see the red pokeball animation)
           autoCatchTimeout = setTimeout(() => {
@@ -53,6 +49,7 @@
             setTimeout(() => {
               catching = false;
               detected = false;
+              catchInProgress = false;
               onCatch();
             }, 600);
           }, 800) as unknown as number;
@@ -88,9 +85,6 @@
   });
 
   onDestroy(() => {
-    if (detectionTimeout) {
-      clearTimeout(detectionTimeout);
-    }
     if (autoCatchTimeout) {
       clearTimeout(autoCatchTimeout);
     }
