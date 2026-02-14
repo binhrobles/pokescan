@@ -37,14 +37,15 @@
     flex-direction: column;
     gap: 8px;
     align-items: center;
+    width: 100%;
+    max-width: 340px;
   }
 
   .screen-bezel {
     background: linear-gradient(135deg, #f8f8f8 0%, #d8d8d8 100%);
     border-radius: 16px;
     padding: 16px;
-    margin: 0 auto;
-    width: calc(100% - 24px);
+    width: 100%;
     position: relative;
     box-shadow:
       /* More pronounced raised bezel */
