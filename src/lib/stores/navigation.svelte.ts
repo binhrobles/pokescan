@@ -68,11 +68,7 @@ function handlePokedexGrid(action: InputAction): void {
 
   switch (action) {
     case 'up':
-      if (gridCursor < gridColumns) {
-        inTabBar = true;
-      } else {
-        gridCursor = Math.max(0, gridCursor - gridColumns);
-      }
+      gridCursor = Math.max(0, gridCursor - gridColumns);
       break;
     case 'down':
       gridCursor = Math.min(maxCursor, gridCursor + gridColumns);
