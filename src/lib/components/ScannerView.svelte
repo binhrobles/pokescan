@@ -152,11 +152,9 @@
     transform: translate(-50%, -50%);
     width: 120px;
     height: 120px;
-    border: 4px solid rgba(255, 255, 255, 0.8);
+    border: 4px solid rgba(255, 255, 255, 0.9);
     border-radius: 50%;
-    box-shadow:
-      0 0 0 2px rgba(0, 0, 0, 0.3),
-      inset 0 0 20px rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
     pointer-events: none;
     transition: all 0.2s ease-out;
     overflow: hidden;
@@ -213,7 +211,6 @@
   .pokeball-overlay.detected {
     border-color: #dc2626;
     box-shadow:
-      0 0 0 2px rgba(0, 0, 0, 0.5),
       0 0 30px rgba(220, 38, 38, 0.8),
       inset 0 0 20px rgba(220, 38, 38, 0.5);
     animation: pulse 0.3s ease-out;

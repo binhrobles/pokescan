@@ -47,7 +47,29 @@
 
 <style>
   .shell {
-    background: var(--pokedex-red);
+    /* Textured plastic background with subtle grain and depth */
+    background:
+      /* Subtle noise texture for plastic grain */
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        rgba(0, 0, 0, 0.03) 1px,
+        transparent 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        rgba(0, 0, 0, 0.03) 1px,
+        transparent 2px
+      ),
+      /* Subtle radial gradient for dimensional depth */
+      radial-gradient(
+        ellipse at 40% 30%,
+        var(--pokedex-red-light) 0%,
+        var(--pokedex-red) 40%,
+        var(--pokedex-red-dark) 100%
+      );
+
     border-radius: 0;
     width: 100%;
     max-width: 380px;
@@ -58,9 +80,29 @@
     padding: 16px;
     gap: 12px;
     box-shadow:
-      inset 0 1px 0 var(--pokedex-red-light),
+      /* Top highlight - molded plastic edge catch light */
+      inset 0 2px 1px rgba(255, 255, 255, 0.15),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.2),
+      /* Outer shadow for depth */
       0 4px 12px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+    position: relative;
+  }
+
+  /* Optional: Add a subtle texture overlay for more pronounced grain */
+  .shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0px,
+        rgba(255, 255, 255, 0.01) 1px,
+        transparent 2px
+      );
+    pointer-events: none;
+    mix-blend-mode: overlay;
   }
 
   /* Top indicator lights */
