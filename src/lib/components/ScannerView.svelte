@@ -44,12 +44,6 @@
             clearTimeout(autoCatchTimeout);
           }
 
-          // Set timeout to clear detection if barcode moves out of view
-          detectionTimeout = setTimeout(() => {
-            detected = false;
-            onDetect(''); // Clear detected barcode
-          }, 500) as unknown as number;
-
           // Auto-catch after delay (enough time to see the red pokeball animation)
           autoCatchTimeout = setTimeout(() => {
             // Start catch animation
@@ -58,6 +52,7 @@
             // After animation completes (600ms), call onCatch
             setTimeout(() => {
               catching = false;
+              detected = false;
               onCatch();
             }, 600);
           }, 800) as unknown as number;
