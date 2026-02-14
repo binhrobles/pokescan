@@ -109,7 +109,7 @@
 
   /* Top indicator lights */
   .shell-top {
-    margin: 0 -16px 0;
+    margin: 0 -16px 16px;
     flex-shrink: 0;
   }
 
@@ -120,8 +120,8 @@
       rgba(220, 38, 38, 0.05) 50%,
       rgba(0, 0, 0, 0.1) 100%
     );
-    border-radius: 0 0 8px 8px;
-    padding: 12px 16px;
+    border-radius: 0;
+    padding: 6px 16px 8px;
     width: 100%;
     box-shadow:
       /* Raised appearance */
@@ -129,6 +129,8 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.15),
       inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: flex-start;
   }
 
   .indicator-cluster {
