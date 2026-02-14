@@ -73,12 +73,11 @@
     grid-area: center;
     background: var(--dpad-color);
 
-    /* Center hub - slightly recessed */
+    /* Center hub - flush/slightly raised, not recessed */
     box-shadow:
-      inset 0 0 4px rgba(0, 0, 0, 0.4),
-      inset 0 1px 2px rgba(0, 0, 0, 0.3);
+      0 1px 2px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-    /* Subtle circular border to define the center */
     border-radius: 4px;
   }
 

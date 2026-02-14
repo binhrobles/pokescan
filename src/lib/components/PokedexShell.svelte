@@ -17,13 +17,15 @@
 <div class="shell">
   <!-- Top section: indicator light + decoration -->
   <div class="shell-top">
-    <div class="indicator-cluster">
-      <div class="indicator-big">
-        <div class="indicator-shine"></div>
+    <div class="indicator-bezel">
+      <div class="indicator-cluster">
+        <div class="indicator-big">
+          <div class="indicator-shine"></div>
+        </div>
+        <div class="indicator-small red"></div>
+        <div class="indicator-small yellow"></div>
+        <div class="indicator-small green"></div>
       </div>
-      <div class="indicator-small red"></div>
-      <div class="indicator-small yellow"></div>
-      <div class="indicator-small green"></div>
     </div>
   </div>
 
@@ -107,8 +109,26 @@
 
   /* Top indicator lights */
   .shell-top {
-    padding: 8px 4px;
+    padding: 4px 4px 8px;
     flex-shrink: 0;
+  }
+
+  /* Raised bezel panel for indicators - suggests open flap design */
+  .indicator-bezel {
+    background: linear-gradient(135deg,
+      rgba(220, 38, 38, 0.15) 0%,
+      rgba(220, 38, 38, 0.05) 50%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: inline-block;
+    box-shadow:
+      /* Raised appearance */
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
   }
 
   .indicator-cluster {
