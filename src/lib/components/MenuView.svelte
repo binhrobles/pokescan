@@ -3,7 +3,7 @@
 
   const labels: Record<string, string> = {
     'scanner': 'SCAN',
-    'pokedex-list': 'POKéDEX',
+    'pokedex': 'POKéDEX',
     'about': 'ABOUT',
   };
 </script>

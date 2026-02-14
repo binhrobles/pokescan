@@ -1,13 +1,29 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
+  import { getGridCursor } from '../stores/navigation.svelte';
 
   const pokemon = $derived(getAllPokemon());
+  const cursor = $derived(getGridCursor());
+
+  let gridContainer: HTMLDivElement | undefined = $state();
+
+  $effect(() => {
+    if (!gridContainer) return;
+    const cursorElement = gridContainer.querySelector(`[data-index="${cursor}"]`);
+    if (cursorElement) {
+      cursorElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
 </script>
 
-<div class="grid-container">
+<div class="grid-container" bind:this={gridContainer}>
   <div class="grid">
-    {#each pokemon as mon (mon.id)}
-      <div class="grid-item">
+    {#each pokemon as mon, index (mon.id)}
+      <div
+        class="grid-item"
+        class:selected={index === cursor}
+        data-index={index}
+      >
         <img
           src="/sprites/{mon.sprite}"
           alt={mon.caught ? mon.name : '???'}
@@ -60,6 +76,13 @@
     background: rgba(15, 56, 15, 0.1);
     border-radius: 4px;
     overflow: hidden;
+    transition: background-color 0.1s;
+  }
+
+  .grid-item.selected {
+    background: rgba(15, 56, 15, 0.4);
+    outline: 2px solid var(--screen-text);
+    outline-offset: -2px;
   }
 
   .sprite {

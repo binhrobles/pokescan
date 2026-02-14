@@ -1,4 +1,4 @@
-import type { ViewState, InputAction } from '../types/pokemon';
+import type { ViewState, InputAction, PokedexTab } from '../types/pokemon';
 
 /**
  * Navigation state machine for the Pokédex.
@@ -7,19 +7,18 @@ import type { ViewState, InputAction } from '../types/pokemon';
  * renders whichever view the current state dictates.
  *
  * State diagram:
- *   menu ──a──→ scanner | pokedex-list | about
+ *   menu ──a──→ scanner | pokedex | about
  *   scanner ──b──→ menu
  *   scanner ──(auto-catch)──→ pokemon-detail
- *   pokedex-list ──a──→ pokemon-detail
- *   pokedex-list ──left/right──→ pokedex-grid
- *   pokedex-list ──b──→ menu
- *   pokedex-grid ──left/right──→ pokedex-list
- *   pokedex-grid ──b──→ menu
+ *   pokedex ──up──→ switch tabs (list ↔ grid)
+ *   pokedex ──a──→ pokemon-detail (from cursor position)
+ *   pokedex ──b──→ menu
  *   pokemon-detail ──b──→ (return to caller)
  *   about ──b──→ menu
  */
 
-const MENU_ITEMS: ViewState[] = ['scanner', 'pokedex-list', 'about'];
+const MENU_ITEMS: ViewState[] = ['scanner', 'pokedex', 'about'];
+const POKEDEX_TABS: PokedexTab[] = ['list', 'grid'];
 
 // --- Svelte 5 runes state ---
 
@@ -28,6 +27,10 @@ let selectedPokemonId: number | null = $state(null);
 let detailReturnTo: ViewState = $state('menu');
 let menuCursor: number = $state(0);
 let listCursor: number = $state(0);
+let gridCursor: number = $state(0);
+let pokedexTab: PokedexTab = $state('list');
+let tabCursor: number = $state(0); // 0 = list, 1 = grid
+let inTabBar: boolean = $state(false); // true when focus is on tab bar
 
 // Fast scroll tracking for held d-pad
 let lastScrollTime = 0;
@@ -43,11 +46,8 @@ export function dispatch(action: InputAction): void {
     case 'scanner':
       if (action === 'b-button') currentView = 'menu';
       break;
-    case 'pokedex-list':
-      handlePokedexList(action);
-      break;
-    case 'pokedex-grid':
-      handlePokedexGrid(action);
+    case 'pokedex':
+      handlePokedex(action);
       break;
     case 'pokemon-detail':
       if (action === 'b-button') currentView = detailReturnTo;
@@ -72,28 +72,58 @@ function handleMenu(action: InputAction): void {
   }
 }
 
-function handlePokedexList(action: InputAction): void {
+function handlePokedex(action: InputAction): void {
+  // Handle tab bar navigation
+  if (inTabBar) {
+    switch (action) {
+      case 'left':
+        tabCursor = Math.max(0, tabCursor - 1);
+        pokedexTab = POKEDEX_TABS[tabCursor];
+        break;
+      case 'right':
+        tabCursor = Math.min(POKEDEX_TABS.length - 1, tabCursor + 1);
+        pokedexTab = POKEDEX_TABS[tabCursor];
+        break;
+      case 'down':
+        inTabBar = false;
+        break;
+      case 'b-button':
+        currentView = 'menu';
+        break;
+    }
+    return;
+  }
+
+  // Handle content navigation based on active tab
+  if (pokedexTab === 'list') {
+    handlePokedexListContent(action);
+  } else {
+    handlePokedexGridContent(action);
+  }
+}
+
+function handlePokedexListContent(action: InputAction): void {
   const now = Date.now();
   const isFastScroll = now - lastScrollTime < FAST_SCROLL_THRESHOLD;
   const scrollAmount = isFastScroll ? FAST_SCROLL_AMOUNT : 1;
 
   switch (action) {
     case 'up':
-      listCursor = Math.max(0, listCursor - scrollAmount);
-      lastScrollTime = now;
+      // First up goes to tab bar
+      if (listCursor === 0) {
+        inTabBar = true;
+      } else {
+        listCursor = Math.max(0, listCursor - scrollAmount);
+        lastScrollTime = now;
+      }
       break;
     case 'down':
       listCursor = Math.min(150, listCursor + scrollAmount);
       lastScrollTime = now;
       break;
-    case 'left':
-    case 'right':
-      currentView = 'pokedex-grid';
-      break;
     case 'a-button':
-      // Only enter detail if Pokémon is caught — caller checks this
       selectedPokemonId = listCursor + 1; // 1-indexed
-      detailReturnTo = 'pokedex-list';
+      detailReturnTo = 'pokedex';
       currentView = 'pokemon-detail';
       break;
     case 'b-button':
@@ -102,11 +132,31 @@ function handlePokedexList(action: InputAction): void {
   }
 }
 
-function handlePokedexGrid(action: InputAction): void {
+function handlePokedexGridContent(action: InputAction): void {
+  const GRID_COLS = 5; // Approximate grid columns
+  const maxCursor = 150; // 0-150 for 151 pokemon
+
   switch (action) {
+    case 'up':
+      if (gridCursor < GRID_COLS) {
+        inTabBar = true;
+      } else {
+        gridCursor = Math.max(0, gridCursor - GRID_COLS);
+      }
+      break;
+    case 'down':
+      gridCursor = Math.min(maxCursor, gridCursor + GRID_COLS);
+      break;
     case 'left':
+      gridCursor = Math.max(0, gridCursor - 1);
+      break;
     case 'right':
-      currentView = 'pokedex-list';
+      gridCursor = Math.min(maxCursor, gridCursor + 1);
+      break;
+    case 'a-button':
+      selectedPokemonId = gridCursor + 1; // 1-indexed
+      detailReturnTo = 'pokedex';
+      currentView = 'pokemon-detail';
       break;
     case 'b-button':
       currentView = 'menu';
@@ -141,4 +191,20 @@ export function getListCursor(): number {
 
 export function getMenuItems(): ViewState[] {
   return MENU_ITEMS;
+}
+
+export function getPokedexTab(): PokedexTab {
+  return pokedexTab;
+}
+
+export function getGridCursor(): number {
+  return gridCursor;
+}
+
+export function getTabCursor(): number {
+  return tabCursor;
+}
+
+export function isInTabBar(): boolean {
+  return inTabBar;
 }

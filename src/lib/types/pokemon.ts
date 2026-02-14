@@ -22,9 +22,11 @@ export type ViewState =
   | 'menu'
   | 'scanner'
   | 'pokemon-detail'
-  | 'pokedex-list'
-  | 'pokedex-grid'
+  | 'pokedex'
   | 'about';
+
+/** Pokedex tab types */
+export type PokedexTab = 'list' | 'grid';
 
 /** D-pad + button input events */
 export type InputAction =
