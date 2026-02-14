@@ -41,7 +41,7 @@
   .dpad-btn {
     background: var(--dpad-color);
     border: none;
-    color: #666;
+    color: #555;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,16 +49,37 @@
     font-size: 12px;
     padding: 0;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+
+    /* Physical depth and dimension */
+    box-shadow:
+      0 3px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+    transition: all 0.05s ease;
   }
 
   .dpad-btn:active {
-    background: #444;
-    color: #999;
+    background: #1a1a1a;
+    color: #777;
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    transform: translateY(2px);
   }
 
   .dpad-center {
     grid-area: center;
     background: var(--dpad-color);
+
+    /* Center hub - slightly recessed */
+    box-shadow:
+      inset 0 0 4px rgba(0, 0, 0, 0.4),
+      inset 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    /* Subtle circular border to define the center */
+    border-radius: 4px;
   }
 
   .up { grid-area: up; border-radius: 6px 6px 0 0; }
@@ -68,5 +89,6 @@
 
   .arrow {
     pointer-events: none;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
   }
 </style>
