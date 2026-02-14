@@ -53,8 +53,9 @@
   }
 
   .octocat {
-    background: none;
-    border: 2px solid var(--screen-text);
+    background: rgba(15, 56, 15, 0.1);
+    border: none;
+    border-radius: 4px;
     padding: 12px;
     cursor: pointer;
     color: var(--screen-text);
@@ -63,8 +64,7 @@
   }
 
   .octocat:hover {
-    background: var(--screen-text);
-    color: var(--screen-bg);
+    background: rgba(15, 56, 15, 0.4);
   }
 
   .octocat:active {
@@ -73,5 +73,7 @@
 
   .octocat svg {
     display: block;
+    filter: brightness(0);
+    opacity: 0.4;
   }
 </style>
