@@ -18,10 +18,13 @@
   <!-- Top section: indicator light + decoration -->
   <div class="shell-top">
     <div class="indicator-bezel">
-      <div class="indicator-cluster">
-        <div class="indicator-big">
-          <div class="indicator-shine"></div>
-        </div>
+      <!-- Big blue light - centered vertically -->
+      <div class="indicator-big">
+        <div class="indicator-shine"></div>
+      </div>
+
+      <!-- Small colored indicators - positioned at top -->
+      <div class="indicator-small-cluster">
         <div class="indicator-small red"></div>
         <div class="indicator-small yellow"></div>
         <div class="indicator-small green"></div>
@@ -121,7 +124,7 @@
       rgba(0, 0, 0, 0.1) 100%
     );
     border-radius: 0;
-    padding: 3px 16px 8px;
+    padding: 8px 16px;
     width: 100%;
     box-shadow:
       /* Raised appearance */
@@ -130,14 +133,19 @@
       inset 0 -1px 0 rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    gap: 12px;
+    position: relative;
   }
 
-  .indicator-cluster {
+  /* Small colored indicators - positioned at top right */
+  .indicator-small-cluster {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: -2px;
+    position: absolute;
+    top: 4px;
+    right: 16px;
   }
 
   .indicator-big {

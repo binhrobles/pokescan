@@ -82,10 +82,23 @@
     border-radius: 4px;
   }
 
-  .up { grid-area: up; border-radius: 6px 6px 0 0; }
-  .down { grid-area: down; border-radius: 0 0 6px 6px; }
+  .up {
+    grid-area: up;
+    border-radius: 6px 6px 0 0;
+  }
+  .down {
+    grid-area: down;
+    border-radius: 0 0 6px 6px;
+  }
   .left { grid-area: left; border-radius: 6px 0 0 6px; }
   .right { grid-area: right; border-radius: 0 6px 6px 0; }
+
+  /* Up and Down arrows - less pronounced depth */
+  .up .arrow,
+  .down .arrow {
+    position: relative;
+    top: -1px;
+  }
 
   .arrow {
     pointer-events: none;
