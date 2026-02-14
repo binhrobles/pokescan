@@ -167,9 +167,11 @@ Font: `Press Start 2P` at 8px base, monospace fallback. Screen uses `image-rende
 
 - **No router library** — state machine handles all navigation
 - **No touch gestures on screen** — d-pad/buttons only (hardware metaphor)
+- **No UI button prompts** — NEVER show on-screen text like "Press A" or "Press B" - the physical buttons are the only interface
 - **CSS-first visuals** — shell, screen, buttons all pure CSS (no image assets for UI chrome)
-- **Catch flow** — scan → auto-capture → heuristic mapping → persist → detail view (no intermediate encounter screen)
-- **Scanner overlay** — Pokeball-styled circle (not standard scan line), turns red on QR detection
+- **Catch flow** — scan → detect (pokeball turns red) → press A to catch → detail view
+- **Scanner overlay** — Pokeball-styled circle (not standard scan line), turns red when QR is in focus, returns to white when QR moves away
+- **Scanner responsiveness** — Must have barcode actively in focus (pokeball red) to catch; moving off barcode clears detection
 - **Center screen** — 1:1 aspect ratio square, Game Boy green
 
 ## Build & Dev

@@ -79,3 +79,13 @@ export function getCaughtCount(): number {
 export function isInitialized(): boolean {
   return initialized;
 }
+
+/** Find Pokemon ID associated with a barcode (if already scanned) */
+export function findPokemonByBarcode(barcodeContent: string): number | undefined {
+  for (const [pokemonId, record] of catches) {
+    if (record.barcodeContent === barcodeContent) {
+      return pokemonId;
+    }
+  }
+  return undefined;
+}

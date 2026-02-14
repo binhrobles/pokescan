@@ -5,8 +5,8 @@
   import ScannerView from './lib/components/ScannerView.svelte';
   import PokemonDetailView from './lib/components/PokemonDetailView.svelte';
   import PokedexView from './lib/components/PokedexView.svelte';
-  import { dispatch, getView, goToDetail } from './lib/stores/navigation.svelte';
-  import { loadPokedex, recordCatch, getCaughtIds } from './lib/stores/pokedex.svelte';
+  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode, getScannerTriggerCatch, resetScannerTriggerCatch } from './lib/stores/navigation.svelte';
+  import { loadPokedex, recordCatch, getCaughtIds, findPokemonByBarcode } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
   import type { InputAction } from './lib/types/pokemon';
 
@@ -19,13 +19,31 @@
     dispatch(action);
   }
 
-  async function handleScan(barcodeContent: string) {
-    // Map barcode to Pokémon ID
-    const caughtIds = getCaughtIds();
-    const pokemonId = barcodeToPokemon(barcodeContent, caughtIds);
+  function handleDetect(barcodeContent: string) {
+    // Store detected barcode (or clear if empty string)
+    setScannerDetectedBarcode(barcodeContent || null);
+  }
 
-    // Record the catch
-    await recordCatch(pokemonId, barcodeContent);
+  async function handleCatch() {
+    // Get the detected barcode from navigation store
+    const barcodeContent = getScannerDetectedBarcode();
+    if (!barcodeContent) return;
+
+    // Check if we've seen this barcode before
+    let pokemonId = findPokemonByBarcode(barcodeContent);
+
+    // If new barcode, use heuristic to map to a Pokémon
+    if (pokemonId === undefined) {
+      const caughtIds = getCaughtIds();
+      pokemonId = barcodeToPokemon(barcodeContent, caughtIds);
+
+      // Record the catch
+      await recordCatch(pokemonId, barcodeContent);
+    }
+
+    // Reset catch trigger and clear detected barcode
+    resetScannerTriggerCatch();
+    setScannerDetectedBarcode(null);
 
     // Navigate to detail view
     goToDetail(pokemonId, 'scanner');
@@ -36,7 +54,7 @@
   {#if getView() === 'menu'}
     <MenuView />
   {:else if getView() === 'scanner'}
-    <ScannerView onScan={handleScan} />
+    <ScannerView onDetect={handleDetect} onCatch={handleCatch} shouldCatch={getScannerTriggerCatch()} />
   {:else if getView() === 'pokedex'}
     <PokedexView />
   {:else if getView() === 'pokemon-detail'}

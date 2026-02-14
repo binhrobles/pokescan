@@ -3,17 +3,36 @@
   import QrScanner from 'qr-scanner';
 
   interface ScannerViewProps {
-    onScan: (barcodeContent: string) => void;
+    onDetect: (barcodeContent: string) => void;
+    onCatch: () => void;
+    shouldCatch: boolean;
   }
 
-  let { onScan }: ScannerViewProps = $props();
+  let { onDetect, onCatch, shouldCatch }: ScannerViewProps = $props();
 
   let videoElement: HTMLVideoElement | undefined = $state();
   let scanner: QrScanner | undefined = $state();
   let detected = $state(false);
+  let catching = $state(false);
   let error = $state<string | null>(null);
   let hasCamera = $state(false);
-  let scanned = $state(false); // Prevent multiple scans
+  let detectionTimeout: number | undefined;
+  let previousShouldCatch = false;
+
+  // Watch for catch trigger
+  $effect(() => {
+    if (shouldCatch && !previousShouldCatch) {
+      // Start catch animation
+      catching = true;
+
+      // After animation completes (600ms), call onCatch
+      setTimeout(() => {
+        catching = false;
+        onCatch();
+      }, 600);
+    }
+    previousShouldCatch = shouldCatch;
+  });
 
   onMount(async () => {
     if (!videoElement) {
@@ -28,17 +47,20 @@
       scanner = new QrScanner(
         videoElement,
         (result) => {
-          // Prevent multiple scans of the same QR code
-          if (scanned) return;
-
-          scanned = true;
+          // QR code is in focus - set detected state
           detected = true;
+          onDetect(result.data);
 
-          // Auto-capture after brief visual feedback
-          setTimeout(() => {
-            scanner?.stop(); // Stop scanning after capture
-            onScan(result.data);
-          }, 300);
+          // Clear any existing timeout
+          if (detectionTimeout) {
+            clearTimeout(detectionTimeout);
+          }
+
+          // Set timeout to clear detection if barcode moves out of view
+          detectionTimeout = setTimeout(() => {
+            detected = false;
+            onDetect(''); // Clear detected barcode
+          }, 500) as unknown as number;
         },
         {
           returnDetailedScanResult: true,
@@ -66,6 +88,9 @@
   });
 
   onDestroy(() => {
+    if (detectionTimeout) {
+      clearTimeout(detectionTimeout);
+    }
     scanner?.stop();
     scanner?.destroy();
   });
@@ -82,7 +107,11 @@
     </div>
   {/if}
   <video bind:this={videoElement} class="video-feed" playsinline></video>
-  <div class="pokeball-overlay" class:detected></div>
+  <div class="pokeball-overlay" class:detected class:catching>
+    <div class="top-half"></div>
+    <div class="divider-line"></div>
+    <div class="center-button"></div>
+  </div>
 </div>
 
 <style>
@@ -114,11 +143,23 @@
       inset 0 0 20px rgba(255, 255, 255, 0.3);
     pointer-events: none;
     transition: all 0.2s ease-out;
+    overflow: hidden;
+  }
+
+  /* Top semicircle (pokeball top half) */
+  .top-half {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: transparent;
+    transition: background 0.2s ease-out;
+    z-index: 1;
   }
 
   /* Horizontal divider line through center (Pokéball style) */
-  .pokeball-overlay::before {
-    content: '';
+  .divider-line {
     position: absolute;
     top: 50%;
     left: 0;
@@ -127,11 +168,11 @@
     background: rgba(255, 255, 255, 0.8);
     transform: translateY(-50%);
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+    z-index: 2;
   }
 
   /* Center button */
-  .pokeball-overlay::after {
-    content: '';
+  .center-button {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -142,6 +183,8 @@
     border: 4px solid rgba(0, 0, 0, 0.5);
     border-radius: 50%;
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+    z-index: 3;
+    transition: all 0.2s ease-out;
   }
 
   /* Red flash on QR detection */
@@ -154,8 +197,17 @@
     animation: pulse 0.3s ease-out;
   }
 
-  .pokeball-overlay.detected::before {
+  .pokeball-overlay.detected .top-half {
     background: #dc2626;
+  }
+
+  .pokeball-overlay.detected .divider-line {
+    background: #dc2626;
+  }
+
+  /* Catching animation */
+  .pokeball-overlay.catching .center-button {
+    animation: catchPulse 0.6s ease-out;
   }
 
   @keyframes pulse {
@@ -165,6 +217,32 @@
     }
     50% {
       transform: translate(-50%, -50%) scale(1.1);
+    }
+  }
+
+  @keyframes catchPulse {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      background: white;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+    30% {
+      transform: translate(-50%, -50%) scale(1.3);
+      background: white;
+    }
+    60% {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: #dc2626;
+      box-shadow:
+        inset 0 0 8px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(220, 38, 38, 0.8);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      background: #dc2626;
+      box-shadow:
+        inset 0 0 8px rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(220, 38, 38, 0.6);
     }
   }
 
