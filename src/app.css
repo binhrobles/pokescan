@@ -7,6 +7,9 @@
 }
 
 :root {
+  /* Explicitly prevent browser auto-dark-mode */
+  color-scheme: light;
+
   /* Pokédex shell colors */
   --pokedex-red: #dc2626;
   --pokedex-red-dark: #991b1b;
