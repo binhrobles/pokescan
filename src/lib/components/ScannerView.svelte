@@ -24,13 +24,6 @@
       // Set worker path
       QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
 
-      // Check if camera is available
-      hasCamera = await QrScanner.hasCamera();
-      if (!hasCamera) {
-        error = 'No camera found';
-        return;
-      }
-
       scanner = new QrScanner(
         videoElement,
         (result) => {
@@ -50,10 +43,21 @@
         }
       );
 
+      // Starting the scanner will request camera permission
       await scanner.start();
+      hasCamera = true;
     } catch (err) {
       console.error('Scanner error:', err);
-      error = err instanceof Error ? err.message : 'Failed to start scanner';
+      const errorMsg = err instanceof Error ? err.message : 'Failed to start scanner';
+
+      // Check specific error types
+      if (errorMsg.includes('Permission') || errorMsg.includes('NotAllowedError')) {
+        error = 'Camera permission denied. Please allow camera access and reload.';
+      } else if (errorMsg.includes('NotFoundError') || errorMsg.includes('no camera')) {
+        error = 'No camera found. Please check your device has a camera.';
+      } else {
+        error = errorMsg;
+      }
     }
   });
 
@@ -167,25 +171,27 @@
     transform: translate(-50%, -50%);
     z-index: 10;
     text-align: center;
-    background: rgba(15, 56, 15, 0.9);
+    background: var(--screen-bg);
     padding: 16px;
-    border-radius: 4px;
+    border: 2px solid var(--screen-text);
     max-width: 80%;
   }
 
   .error-title {
     font-size: 12px;
     margin-bottom: 8px;
+    color: var(--screen-text);
   }
 
   .error-text {
     font-size: 8px;
-    opacity: 0.8;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    color: var(--screen-text);
   }
 
   .error-hint {
-    font-size: 6px;
-    opacity: 0.6;
+    font-size: 7px;
+    color: var(--screen-text);
+    opacity: 0.7;
   }
 </style>
