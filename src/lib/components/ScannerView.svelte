@@ -113,7 +113,7 @@
     </div>
   {:else if !cameraReady}
     <div class="loading-message">
-      <div class="loading-text">booting...</div>
+      <div class="loading-text">BOOTING...</div>
     </div>
   {/if}
   <video bind:this={videoElement} class="video-feed" class:ready={cameraReady} playsinline></video>
