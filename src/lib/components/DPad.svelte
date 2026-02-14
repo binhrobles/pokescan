@@ -73,10 +73,11 @@
     grid-area: center;
     background: var(--dpad-color);
 
-    /* Center hub - flush/slightly raised, not recessed */
+    /* Center hub - match directional buttons (raised, not recessed) */
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 3px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 
     border-radius: 4px;
   }

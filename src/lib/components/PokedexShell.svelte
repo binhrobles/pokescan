@@ -121,7 +121,7 @@
       rgba(0, 0, 0, 0.1) 100%
     );
     border-radius: 0;
-    padding: 6px 16px 8px;
+    padding: 3px 16px 8px;
     width: 100%;
     box-shadow:
       /* Raised appearance */
@@ -137,6 +137,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-top: -2px;
   }
 
   .indicator-big {
