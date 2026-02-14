@@ -100,8 +100,6 @@
 
   .grid-item.selected {
     background: rgba(15, 56, 15, 0.4);
-    outline: 2px solid var(--screen-text);
-    outline-offset: -2px;
   }
 
   .sprite {
