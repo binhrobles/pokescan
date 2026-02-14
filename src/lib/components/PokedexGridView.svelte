@@ -1,23 +1,42 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
-  import { getGridCursor } from '../stores/navigation.svelte';
+  import { getGridCursor, setGridColumns } from '../stores/navigation.svelte';
 
   const pokemon = $derived(getAllPokemon());
   const cursor = $derived(getGridCursor());
 
   let gridContainer: HTMLDivElement | undefined = $state();
+  let gridElement: HTMLDivElement | undefined = $state();
 
+  // Calculate actual grid columns based on rendered layout
+  $effect(() => {
+    if (!gridElement) return;
+
+    const updateColumns = () => {
+      const computedStyle = window.getComputedStyle(gridElement);
+      const columns = computedStyle.getPropertyValue('grid-template-columns').split(' ').length;
+      setGridColumns(columns);
+    };
+
+    updateColumns();
+    const resizeObserver = new ResizeObserver(updateColumns);
+    resizeObserver.observe(gridElement);
+
+    return () => resizeObserver.disconnect();
+  });
+
+  // Scroll to cursor without animation when returning from detail view
   $effect(() => {
     if (!gridContainer) return;
     const cursorElement = gridContainer.querySelector(`[data-index="${cursor}"]`);
     if (cursorElement) {
-      cursorElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      cursorElement.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
   });
 </script>
 
 <div class="grid-container" bind:this={gridContainer}>
-  <div class="grid">
+  <div class="grid" bind:this={gridElement}>
     {#each pokemon as mon, index (mon.id)}
       <div
         class="grid-item"

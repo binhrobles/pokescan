@@ -42,26 +42,27 @@
 
   .tab-bar {
     display: flex;
-    gap: 4px;
-    padding: 6px 8px;
-    border-bottom: 2px solid var(--screen-text);
+    gap: 16px;
+    padding: 6px 12px 4px 12px;
   }
 
   .tab {
-    flex: 1;
-    padding: 4px 8px;
+    padding: 4px 0;
     font-size: 10px;
-    text-align: center;
+    text-align: left;
     opacity: 0.5;
     transition: all 0.1s;
+    border-bottom: 2px solid transparent;
   }
 
   .tab.active {
     opacity: 1;
+    border-bottom-color: var(--screen-text);
   }
 
   .tab.active.focused {
-    background: rgba(15, 56, 15, 0.4);
+    opacity: 1;
+    color: var(--screen-bg-dark);
   }
 
   .tab-content {

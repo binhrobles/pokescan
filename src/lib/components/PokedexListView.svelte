@@ -12,7 +12,7 @@
     if (!listContainer) return;
     const cursorElement = listContainer.querySelector(`[data-index="${cursor}"]`);
     if (cursorElement) {
-      cursorElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      cursorElement.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
   });
 </script>

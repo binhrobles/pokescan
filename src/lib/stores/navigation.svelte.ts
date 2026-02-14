@@ -28,6 +28,7 @@ let detailReturnTo: ViewState = $state('menu');
 let menuCursor: number = $state(0);
 let listCursor: number = $state(0);
 let gridCursor: number = $state(0);
+let gridColumns: number = $state(5); // Updated dynamically by grid view
 let pokedexTab: PokedexTab = $state('list');
 let tabCursor: number = $state(0); // 0 = list, 1 = grid
 let inTabBar: boolean = $state(false); // true when focus is on tab bar
@@ -133,19 +134,18 @@ function handlePokedexListContent(action: InputAction): void {
 }
 
 function handlePokedexGridContent(action: InputAction): void {
-  const GRID_COLS = 5; // Approximate grid columns
   const maxCursor = 150; // 0-150 for 151 pokemon
 
   switch (action) {
     case 'up':
-      if (gridCursor < GRID_COLS) {
+      if (gridCursor < gridColumns) {
         inTabBar = true;
       } else {
-        gridCursor = Math.max(0, gridCursor - GRID_COLS);
+        gridCursor = Math.max(0, gridCursor - gridColumns);
       }
       break;
     case 'down':
-      gridCursor = Math.min(maxCursor, gridCursor + GRID_COLS);
+      gridCursor = Math.min(maxCursor, gridCursor + gridColumns);
       break;
     case 'left':
       gridCursor = Math.max(0, gridCursor - 1);
@@ -162,6 +162,11 @@ function handlePokedexGridContent(action: InputAction): void {
       currentView = 'menu';
       break;
   }
+}
+
+/** Set grid columns (called by grid view when layout changes) */
+export function setGridColumns(cols: number): void {
+  gridColumns = cols;
 }
 
 /** Navigate directly to detail view (used by catch flow) */
