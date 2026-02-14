@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
   import { getGridCursor, setGridColumns } from '../stores/navigation.svelte';
+  import { getSpritePath } from '../utils/paths';
 
   const pokemon = $derived(getAllPokemon());
   const cursor = $derived(getGridCursor());
@@ -44,7 +45,7 @@
         data-index={index}
       >
         <img
-          src="/sprites/{mon.sprite}"
+          src={getSpritePath(mon.sprite)}
           alt={mon.caught ? mon.name : '???'}
           class="sprite"
           class:silhouette={!mon.caught}

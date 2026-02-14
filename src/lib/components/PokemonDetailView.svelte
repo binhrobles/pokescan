@@ -3,6 +3,7 @@
   import { getPokemon } from '../stores/pokedex.svelte';
   import { getSelectedPokemonId } from '../stores/navigation.svelte';
   import { fetchPokemonEnrichment, isOnline, type PokemonEnrichment } from '../services/pokeapi';
+  import { getSpritePath } from '../utils/paths';
 
   const pokemonId = getSelectedPokemonId();
   const pokemon = pokemonId ? getPokemon(pokemonId) : undefined;
@@ -34,7 +35,7 @@
       <div class="top-section">
         <div class="sprite-area">
           <img
-            src="/sprites/{pokemon.sprite}"
+            src={getSpritePath(pokemon.sprite)}
             alt={pokemon.name}
             class="sprite"
             on:error={(e) => {
@@ -80,7 +81,7 @@
       <!-- Not caught: centered sprite -->
       <div class="sprite-area centered">
         <img
-          src="/sprites/{pokemon.sprite}"
+          src={getSpritePath(pokemon.sprite)}
           alt={pokemon.name}
           class="sprite silhouette"
           on:error={(e) => {

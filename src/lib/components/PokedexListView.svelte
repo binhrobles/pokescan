@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getAllPokemon } from '../stores/pokedex.svelte';
   import { getListCursor } from '../stores/navigation.svelte';
+  import { getSpritePath } from '../utils/paths';
 
   const pokemon = $derived(getAllPokemon());
   const cursor = $derived(getListCursor());
@@ -29,7 +30,7 @@
       {#if mon.caught}
         <div class="pokemon-sprite">
           <img
-            src="/sprites/{mon.sprite}"
+            src={getSpritePath(mon.sprite)}
             alt={mon.name}
             on:error={(e) => {
               e.currentTarget.style.display = 'none';
