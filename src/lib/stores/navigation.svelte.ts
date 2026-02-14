@@ -11,7 +11,10 @@ import type { ViewState, InputAction } from '../types/pokemon';
  *   scanner ──b──→ menu
  *   scanner ──(auto-catch)──→ pokemon-detail
  *   pokedex-list ──a──→ pokemon-detail
+ *   pokedex-list ──left/right──→ pokedex-grid
  *   pokedex-list ──b──→ menu
+ *   pokedex-grid ──left/right──→ pokedex-list
+ *   pokedex-grid ──b──→ menu
  *   pokemon-detail ──b──→ (return to caller)
  *   about ──b──→ menu
  */
@@ -42,6 +45,9 @@ export function dispatch(action: InputAction): void {
       break;
     case 'pokedex-list':
       handlePokedexList(action);
+      break;
+    case 'pokedex-grid':
+      handlePokedexGrid(action);
       break;
     case 'pokemon-detail':
       if (action === 'b-button') currentView = detailReturnTo;
@@ -80,11 +86,27 @@ function handlePokedexList(action: InputAction): void {
       listCursor = Math.min(150, listCursor + scrollAmount);
       lastScrollTime = now;
       break;
+    case 'left':
+    case 'right':
+      currentView = 'pokedex-grid';
+      break;
     case 'a-button':
       // Only enter detail if Pokémon is caught — caller checks this
       selectedPokemonId = listCursor + 1; // 1-indexed
       detailReturnTo = 'pokedex-list';
       currentView = 'pokemon-detail';
+      break;
+    case 'b-button':
+      currentView = 'menu';
+      break;
+  }
+}
+
+function handlePokedexGrid(action: InputAction): void {
+  switch (action) {
+    case 'left':
+    case 'right':
+      currentView = 'pokedex-list';
       break;
     case 'b-button':
       currentView = 'menu';

@@ -72,7 +72,6 @@
     align-items: center;
     gap: 12px;
     padding: 12px 20px;
-    margin-bottom: 6px;
     transition: background-color 0.1s;
     position: relative;
     min-height: 72px;

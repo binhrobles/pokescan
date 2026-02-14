@@ -23,6 +23,7 @@ export type ViewState =
   | 'scanner'
   | 'pokemon-detail'
   | 'pokedex-list'
+  | 'pokedex-grid'
   | 'about';
 
 /** D-pad + button input events */
