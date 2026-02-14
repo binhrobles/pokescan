@@ -71,10 +71,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 6px 20px;
-    margin-bottom: 4px;
+    padding: 12px 20px;
+    margin-bottom: 6px;
     transition: background-color 0.1s;
     position: relative;
+    min-height: 72px;
   }
 
   .list-item.selected {
@@ -82,7 +83,7 @@
   }
 
   .pokemon-id {
-    font-size: 10px;
+    font-size: 12px;
     width: 40px;
     flex-shrink: 0;
     position: absolute;
@@ -90,13 +91,13 @@
   }
 
   .pokemon-sprite {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 20px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -113,7 +114,7 @@
   }
 
   .pokemon-name {
-    font-size: 12px;
+    font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
