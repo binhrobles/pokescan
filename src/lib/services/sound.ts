@@ -2,9 +2,15 @@
  * Sound service for playing Pokemon cries using Web Audio API.
  */
 
+import { getSetting, setSetting } from './storage';
+
+const DEFAULT_CRY_VOLUME = 0.3;
+
 let audioContext: AudioContext | null = null;
+let gainNode: GainNode | null = null;
 const audioCache = new Map<number, AudioBuffer>();
 let isInitialized = false;
+let cryVolume = DEFAULT_CRY_VOLUME;
 
 /** Initialize audio context (call on user interaction) */
 function getAudioContext(): AudioContext {
@@ -15,11 +21,30 @@ function getAudioContext(): AudioContext {
   return audioContext;
 }
 
+/** Get or create the gain node for volume control */
+function getGainNode(): GainNode {
+  if (!gainNode) {
+    const context = getAudioContext();
+    gainNode = context.createGain();
+    gainNode.gain.value = cryVolume;
+    gainNode.connect(context.destination);
+    console.log('[Sound] GainNode created, volume:', cryVolume);
+  }
+  return gainNode;
+}
+
 /** Initialize audio system on first user interaction */
 export async function initAudio(): Promise<void> {
   if (isInitialized) return;
 
   try {
+    // Load persisted volume before creating audio nodes
+    const saved = await getSetting<number>('cryVolume');
+    if (saved !== undefined) {
+      cryVolume = saved;
+      console.log('[Sound] Loaded saved volume:', cryVolume);
+    }
+
     const context = getAudioContext();
     if (context.state === 'suspended') {
       await context.resume();
@@ -84,10 +109,10 @@ export async function playCry(pokemonId: number): Promise<void> {
 
     const audioBuffer = await loadCry(pokemonId);
 
-    // Create source node and connect to output
+    // Create source node and connect through gain node for volume control
     const source = context.createBufferSource();
     source.buffer = audioBuffer;
-    source.connect(context.destination);
+    source.connect(getGainNode());
 
     // Play the sound
     console.log('[Sound] Playing cry for Pokemon', pokemonId);
@@ -105,4 +130,19 @@ export async function preloadCry(pokemonId: number): Promise<void> {
   } catch (error) {
     // Silently fail - preloading is optional
   }
+}
+
+/** Get the current cry volume (0.0 to 1.0) */
+export function getCryVolume(): number {
+  return cryVolume;
+}
+
+/** Set the cry volume (0.0 to 1.0) and persist to storage */
+export async function setCryVolume(volume: number): Promise<void> {
+  cryVolume = Math.max(0, Math.min(1, volume));
+  if (gainNode) {
+    gainNode.gain.value = cryVolume;
+  }
+  await setSetting('cryVolume', cryVolume);
+  console.log('[Sound] Volume set to', cryVolume);
 }
