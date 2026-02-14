@@ -97,9 +97,9 @@
   }
 
   .led {
-    width: 8px;
+    width: 32px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: 30%;
     border: 1px solid rgba(0, 0, 0, 0.3);
     box-shadow:
       inset 0 1px 2px rgba(0, 0, 0, 0.3),
