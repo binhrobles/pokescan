@@ -104,7 +104,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 12px;
+    padding: 12px 16px;
     gap: 0;
   }
 
@@ -207,7 +207,7 @@
   .line {
     flex: 1;
     height: 2px;
-    background-color: transparent;
+    background-color: var(--screen-text);
   }
 
   /* Description Section (bottom half) */
