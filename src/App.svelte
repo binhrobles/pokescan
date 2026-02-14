@@ -4,6 +4,7 @@
   import MenuView from './lib/components/MenuView.svelte';
   import ScannerView from './lib/components/ScannerView.svelte';
   import PokemonDetailView from './lib/components/PokemonDetailView.svelte';
+  import PokedexListView from './lib/components/PokedexListView.svelte';
   import { dispatch, getView, goToDetail } from './lib/stores/navigation.svelte';
   import { loadPokedex, recordCatch, getCaughtIds } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
@@ -37,7 +38,7 @@
   {:else if getView() === 'scanner'}
     <ScannerView onScan={handleScan} />
   {:else if getView() === 'pokedex-list'}
-    <div class="placeholder">POKéDEX</div>
+    <PokedexListView />
   {:else if getView() === 'pokemon-detail'}
     <PokemonDetailView />
   {:else if getView() === 'about'}

@@ -1,9 +1,22 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { getPokemon } from '../stores/pokedex.svelte';
   import { getSelectedPokemonId } from '../stores/navigation.svelte';
+  import { fetchPokemonEnrichment, isOnline, type PokemonEnrichment } from '../services/pokeapi';
 
   const pokemonId = getSelectedPokemonId();
   const pokemon = pokemonId ? getPokemon(pokemonId) : undefined;
+
+  let enrichment = $state<PokemonEnrichment | null>(null);
+  let loading = $state(false);
+
+  onMount(async () => {
+    if (!pokemonId || !pokemon?.caught || !isOnline()) return;
+
+    loading = true;
+    enrichment = await fetchPokemonEnrichment(pokemonId);
+    loading = false;
+  });
 </script>
 
 {#if pokemon}
@@ -30,12 +43,38 @@
       {/each}
     </div>
 
+    {#if enrichment}
+      <div class="enrichment">
+        <div class="genus">{enrichment.genus}</div>
+        <div class="flavor-text">"{enrichment.flavorText}"</div>
+        <div class="stats">
+          HT: {(enrichment.height / 10).toFixed(1)}m · WT: {(enrichment.weight / 10).toFixed(1)}kg
+        </div>
+      </div>
+    {:else if loading}
+      <div class="enrichment">
+        <div class="loading">Loading...</div>
+      </div>
+    {/if}
+
     {#if pokemon.caught && pokemon.catchRecord}
       <div class="catch-info">
         <div class="caught-label">CAUGHT!</div>
         <div class="caught-date">
           {new Date(pokemon.catchRecord.caughtAt).toLocaleDateString()}
+          {' '}
+          {new Date(pokemon.catchRecord.caughtAt).toLocaleTimeString()}
         </div>
+        {#if pokemon.catchRecord.barcodeContent}
+          <div class="barcode">
+            BARCODE: {pokemon.catchRecord.barcodeContent.substring(0, 20)}{pokemon.catchRecord.barcodeContent.length > 20 ? '...' : ''}
+          </div>
+        {/if}
+        {#if pokemon.catchRecord.location}
+          <div class="location">
+            LOC: {pokemon.catchRecord.location.lat.toFixed(4)}, {pokemon.catchRecord.location.lng.toFixed(4)}
+          </div>
+        {/if}
       </div>
     {:else}
       <div class="catch-info">
@@ -104,6 +143,36 @@
     border-radius: 4px;
   }
 
+  .enrichment {
+    text-align: center;
+    margin-top: 8px;
+    max-width: 100%;
+  }
+
+  .genus {
+    font-size: 8px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .flavor-text {
+    font-size: 6px;
+    line-height: 1.4;
+    opacity: 0.8;
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+
+  .stats {
+    font-size: 6px;
+    opacity: 0.6;
+  }
+
+  .loading {
+    font-size: 6px;
+    opacity: 0.5;
+  }
+
   .catch-info {
     text-align: center;
     margin-top: 8px;
@@ -117,6 +186,19 @@
     font-size: 8px;
     margin-top: 4px;
     opacity: 0.7;
+  }
+
+  .barcode {
+    font-size: 6px;
+    margin-top: 4px;
+    opacity: 0.6;
+    word-break: break-all;
+  }
+
+  .location {
+    font-size: 6px;
+    margin-top: 4px;
+    opacity: 0.6;
   }
 
   .not-caught {
