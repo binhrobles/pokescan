@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import QrScanner from 'qr-scanner';
+  import { BarcodeDetector } from 'barcode-detector/pure';
 
   interface ScannerViewProps {
     onDetect: (barcodeContent: string) => void;
@@ -10,7 +10,6 @@
   let { onDetect, onCatch }: ScannerViewProps = $props();
 
   let videoElement: HTMLVideoElement | undefined = $state();
-  let scanner: QrScanner | undefined = $state();
   let detected = $state(false);
   let catching = $state(false);
   let catchInProgress = $state(false);
@@ -18,6 +17,8 @@
   let hasCamera = $state(false);
   let cameraReady = $state(false);
   let autoCatchTimeout: number | undefined;
+  let scanInterval: number | undefined;
+  let mediaStream: MediaStream | undefined;
 
   onMount(async () => {
     if (!videoElement) {
@@ -26,49 +27,70 @@
     }
 
     try {
-      // Set worker path
-      QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
-
-      scanner = new QrScanner(
-        videoElement,
-        (result) => {
-          // QR code is in focus - set detected state
-          detected = true;
-          onDetect(result.data);
-
-          // Only start catch process once per detection
-          if (catchInProgress) return;
-          catchInProgress = true;
-
-          // Auto-catch after delay (enough time to see the red pokeball animation)
-          autoCatchTimeout = setTimeout(() => {
-            // Start catch animation
-            catching = true;
-
-            // After animation completes (600ms), call onCatch
-            setTimeout(() => {
-              catching = false;
-              detected = false;
-              catchInProgress = false;
-              onCatch();
-            }, 600);
-          }, 800) as unknown as number;
-        },
-        {
-          returnDetailedScanResult: true,
-          highlightScanRegion: false,
-          highlightCodeOutline: false,
-        }
-      );
-
-      // Starting the scanner will request camera permission
-      await scanner.start();
+      // Request camera access
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+      });
+      videoElement.srcObject = mediaStream;
+      await videoElement.play();
       hasCamera = true;
 
-      // Wait a bit for the video stream to fully initialize to prevent visual glitches
+      // Wait for the video stream to fully initialize to prevent visual glitches
       setTimeout(() => {
         cameraReady = true;
       }, 200);
+
+      // Create barcode detector with multiple format support
+      const detector = new BarcodeDetector({
+        formats: [
+          'qr_code',
+          'ean_13',
+          'ean_8',
+          'upc_a',
+          'upc_e',
+          'code_128',
+          'code_39',
+          'code_93',
+          'codabar',
+          'itf',
+        ],
+      });
+
+      // Scan for barcodes every 200ms
+      scanInterval = setInterval(async () => {
+        if (!videoElement || videoElement.readyState < 2) return;
+
+        try {
+          const barcodes = await detector.detect(videoElement);
+          if (barcodes.length > 0) {
+            const result = barcodes[0];
+
+            // Barcode is in focus - set detected state
+            detected = true;
+            onDetect(result.rawValue);
+
+            // Only start catch process once per detection
+            if (catchInProgress) return;
+            catchInProgress = true;
+
+            // Auto-catch after delay (enough time to see the red pokeball animation)
+            autoCatchTimeout = setTimeout(() => {
+              // Start catch animation
+              catching = true;
+
+              // After animation completes (600ms), call onCatch
+              setTimeout(() => {
+                catching = false;
+                detected = false;
+                catchInProgress = false;
+                onCatch();
+              }, 600);
+            }, 800) as unknown as number;
+          }
+        } catch {
+          // Detection can fail on individual frames; ignore and retry
+        }
+      }, 200) as unknown as number;
     } catch (err) {
       console.error('Scanner error:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to start scanner';
@@ -88,8 +110,15 @@
     if (autoCatchTimeout) {
       clearTimeout(autoCatchTimeout);
     }
-    scanner?.stop();
-    scanner?.destroy();
+    if (scanInterval) {
+      clearInterval(scanInterval);
+    }
+    // Stop all camera tracks
+    if (mediaStream) {
+      for (const track of mediaStream.getTracks()) {
+        track.stop();
+      }
+    }
   });
 </script>
 
@@ -198,7 +227,7 @@
     transition: all 0.2s ease-out;
   }
 
-  /* Red flash on QR detection */
+  /* Red flash on barcode detection */
   .pokeball-overlay.detected {
     border-color: #dc2626;
     box-shadow:
