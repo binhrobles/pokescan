@@ -13,10 +13,8 @@
   let loading = $state(false);
 
   onMount(async () => {
-    // Play cry when detail view opens (only for caught Pokemon)
-    if (pokemonId && pokemon?.caught) {
-      playCry(pokemonId);
-    }
+    // Note: Auto-playing cry on mount is blocked by browser autoplay policies
+    // User must press A button to hear the cry (requires user interaction)
 
     // Fetch enrichment data if online
     if (!pokemonId || !pokemon?.caught || !isOnline()) return;
