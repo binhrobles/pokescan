@@ -49,16 +49,15 @@
   <div class="caught-count">
     {pokemon.filter((p) => p.caught).length} / 151 CAUGHT
   </div>
-  <div class="hint">A: VIEW · B: BACK</div>
 </div>
 
 <style>
   .pokedex-list {
     width: 100%;
-    height: calc(100% - 32px);
+    height: calc(100% - 28px);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 4px;
+    padding: 6px;
 
     /* Hide scrollbar but keep functionality */
     scrollbar-width: none;
@@ -72,32 +71,30 @@
   .list-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px;
-    margin-bottom: 2px;
-    border: 2px solid transparent;
+    gap: 12px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
     transition: background-color 0.1s;
   }
 
   .list-item.selected {
-    background: rgba(15, 56, 15, 0.3);
-    border-color: var(--screen-text);
+    background: rgba(15, 56, 15, 0.4);
   }
 
   .pokemon-id {
-    font-size: 8px;
-    width: 32px;
+    font-size: 10px;
+    width: 40px;
     flex-shrink: 0;
   }
 
   .pokemon-sprite {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .pokemon-sprite img {
@@ -111,7 +108,7 @@
   }
 
   .pokemon-name {
-    font-size: 10px;
+    font-size: 12px;
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,20 +120,14 @@
   }
 
   .footer {
-    height: 32px;
-    border-top: 2px solid var(--screen-text);
-    padding: 4px 8px;
+    height: 28px;
+    padding: 6px 8px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
   }
 
   .caught-count {
-    font-size: 8px;
-  }
-
-  .hint {
-    font-size: 6px;
-    opacity: 0.5;
+    font-size: 10px;
   }
 </style>

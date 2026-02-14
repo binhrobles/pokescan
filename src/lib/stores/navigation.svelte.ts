@@ -26,6 +26,11 @@ let detailReturnTo: ViewState = $state('menu');
 let menuCursor: number = $state(0);
 let listCursor: number = $state(0);
 
+// Fast scroll tracking for held d-pad
+let lastScrollTime = 0;
+const FAST_SCROLL_THRESHOLD = 150; // ms - if inputs come faster than this, enable fast scroll
+const FAST_SCROLL_AMOUNT = 5; // scroll 5 items at a time when fast scrolling
+
 /** Process a d-pad or button input */
 export function dispatch(action: InputAction): void {
   switch (currentView) {
@@ -62,12 +67,18 @@ function handleMenu(action: InputAction): void {
 }
 
 function handlePokedexList(action: InputAction): void {
+  const now = Date.now();
+  const isFastScroll = now - lastScrollTime < FAST_SCROLL_THRESHOLD;
+  const scrollAmount = isFastScroll ? FAST_SCROLL_AMOUNT : 1;
+
   switch (action) {
     case 'up':
-      listCursor = Math.max(0, listCursor - 1);
+      listCursor = Math.max(0, listCursor - scrollAmount);
+      lastScrollTime = now;
       break;
     case 'down':
-      listCursor = Math.min(150, listCursor + 1);
+      listCursor = Math.min(150, listCursor + scrollAmount);
+      lastScrollTime = now;
       break;
     case 'a-button':
       // Only enter detail if Pokémon is caught — caller checks this
