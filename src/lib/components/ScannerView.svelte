@@ -11,29 +11,50 @@
   let videoElement: HTMLVideoElement | undefined = $state();
   let scanner: QrScanner | undefined = $state();
   let detected = $state(false);
+  let error = $state<string | null>(null);
+  let hasCamera = $state(false);
 
-  onMount(() => {
-    if (!videoElement) return;
+  onMount(async () => {
+    if (!videoElement) {
+      error = 'Video element not ready';
+      return;
+    }
 
-    scanner = new QrScanner(
-      videoElement,
-      (result) => {
-        // QR code detected — trigger red flash
-        detected = true;
+    try {
+      // Set worker path
+      QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
 
-        // Auto-capture after brief visual feedback
-        setTimeout(() => {
-          onScan(result.data);
-        }, 300);
-      },
-      {
-        returnDetailedScanResult: true,
-        highlightScanRegion: false,
-        highlightCodeOutline: false,
+      // Check if camera is available
+      hasCamera = await QrScanner.hasCamera();
+      if (!hasCamera) {
+        error = 'No camera found';
+        return;
       }
-    );
 
-    scanner.start();
+      scanner = new QrScanner(
+        videoElement,
+        (result) => {
+          // QR code detected — trigger red flash
+          detected = true;
+
+          // Auto-capture after brief visual feedback
+          setTimeout(() => {
+            onScan(result.data);
+            detected = false;
+          }, 300);
+        },
+        {
+          returnDetailedScanResult: true,
+          highlightScanRegion: false,
+          highlightCodeOutline: false,
+        }
+      );
+
+      await scanner.start();
+    } catch (err) {
+      console.error('Scanner error:', err);
+      error = err instanceof Error ? err.message : 'Failed to start scanner';
+    }
   });
 
   onDestroy(() => {
@@ -43,7 +64,16 @@
 </script>
 
 <div class="scanner-container">
-  <video bind:this={videoElement} class="video-feed"></video>
+  {#if error}
+    <div class="error-message">
+      <div class="error-title">SCANNER ERROR</div>
+      <div class="error-text">{error}</div>
+      {#if !hasCamera}
+        <div class="error-hint">Please enable camera access</div>
+      {/if}
+    </div>
+  {/if}
+  <video bind:this={videoElement} class="video-feed" playsinline></video>
   <div class="pokeball-overlay" class:detected></div>
 </div>
 
@@ -128,5 +158,34 @@
     50% {
       transform: translate(-50%, -50%) scale(1.1);
     }
+  }
+
+  .error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    background: rgba(15, 56, 15, 0.9);
+    padding: 16px;
+    border-radius: 4px;
+    max-width: 80%;
+  }
+
+  .error-title {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .error-text {
+    font-size: 8px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+
+  .error-hint {
+    font-size: 6px;
+    opacity: 0.6;
   }
 </style>
