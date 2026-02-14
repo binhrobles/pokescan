@@ -77,7 +77,7 @@
       // Wait a bit for the video stream to fully initialize to prevent visual glitches
       setTimeout(() => {
         cameraReady = true;
-      }, 100);
+      }, 200);
     } catch (err) {
       console.error('Scanner error:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to start scanner';
