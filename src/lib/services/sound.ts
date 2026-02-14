@@ -21,7 +21,9 @@ async function loadCry(pokemonId: number): Promise<AudioBuffer> {
   }
 
   try {
-    const response = await fetch(`/cries/${pokemonId}.ogg`);
+    // Use BASE_URL to handle GitHub Pages deployment path
+    const basePath = import.meta.env.BASE_URL || '/';
+    const response = await fetch(`${basePath}cries/${pokemonId}.ogg`);
     if (!response.ok) {
       throw new Error(`Failed to load cry for Pokemon ${pokemonId}`);
     }
