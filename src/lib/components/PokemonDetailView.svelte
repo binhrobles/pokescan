@@ -23,7 +23,11 @@
   <div class="detail-view">
     <div class="header">
       <div class="id">#{pokemon.id.toString().padStart(3, '0')}</div>
-      <div class="name">{pokemon.name.toUpperCase()}</div>
+      {#if pokemon.caught}
+        <div class="name">{pokemon.name.toUpperCase()}</div>
+      {:else}
+        <div class="name unknown">???</div>
+      {/if}
     </div>
 
     <div class="sprite-container">
@@ -31,17 +35,20 @@
         src="/sprites/{pokemon.sprite}"
         alt={pokemon.name}
         class="sprite"
+        class:silhouette={!pokemon.caught}
         on:error={(e) => {
           e.currentTarget.style.display = 'none';
         }}
       />
     </div>
 
-    <div class="types">
-      {#each pokemon.types as type}
-        <span class="type-badge">{type.toUpperCase()}</span>
-      {/each}
-    </div>
+    {#if pokemon.caught}
+      <div class="types">
+        {#each pokemon.types as type}
+          <span class="type-badge">{type.toUpperCase()}</span>
+        {/each}
+      </div>
+    {/if}
 
     {#if enrichment}
       <div class="enrichment">
@@ -115,6 +122,10 @@
     margin-top: 4px;
   }
 
+  .name.unknown {
+    opacity: 0.5;
+  }
+
   .sprite-container {
     flex: 1;
     display: flex;
@@ -127,6 +138,11 @@
     width: 96px;
     height: 96px;
     image-rendering: pixelated;
+  }
+
+  .sprite.silhouette {
+    filter: brightness(0);
+    opacity: 0.6;
   }
 
   .types {

@@ -38,8 +38,8 @@
         </div>
         <div class="pokemon-name">{mon.name.toUpperCase()}</div>
       {:else}
-        <div class="pokemon-sprite unknown">???</div>
-        <div class="pokemon-name unknown">???</div>
+        <div class="pokemon-sprite unknown">?</div>
+        <div class="pokemon-name unknown">?</div>
       {/if}
     </div>
   {/each}
