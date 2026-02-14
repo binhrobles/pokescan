@@ -138,14 +138,15 @@
     position: relative;
   }
 
-  /* Small colored indicators - positioned at top right */
+  /* Small colored indicators - positioned to the right of big blue indicator */
   .indicator-small-cluster {
     display: flex;
     align-items: center;
     gap: 8px;
     position: absolute;
-    top: 4px;
-    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 72px; /* 48px (big indicator width) + 12px (gap) + 12px (spacing) */
   }
 
   .indicator-big {
