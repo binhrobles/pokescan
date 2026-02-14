@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => ({
     basicSsl(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico'],
+      includeAssets: ['favicon.ico', 'cries/*.ogg'],
       manifest: {
         name: 'PokéScan',
         short_name: 'PokéScan',
@@ -41,7 +41,7 @@ export default defineConfig(({ command }) => ({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ogg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/pokeapi\.co\/api\/.*/i,

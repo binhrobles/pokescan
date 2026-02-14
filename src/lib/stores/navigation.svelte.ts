@@ -1,4 +1,5 @@
 import type { ViewState, InputAction } from '../types/pokemon';
+import { playCry } from '../services/sound';
 
 /**
  * Navigation state machine for the Pokédex.
@@ -46,7 +47,11 @@ export function dispatch(action: InputAction): void {
       handlePokedexGrid(action);
       break;
     case 'pokemon-detail':
-      if (action === 'b-button') currentView = detailReturnTo;
+      if (action === 'a-button' && selectedPokemonId) {
+        playCry(selectedPokemonId);
+      } else if (action === 'b-button') {
+        currentView = detailReturnTo;
+      }
       break;
     case 'about':
       if (action === 'b-button') currentView = 'menu';

@@ -4,6 +4,7 @@
   import { getSelectedPokemonId } from '../stores/navigation.svelte';
   import { fetchPokemonEnrichment, isOnline, type PokemonEnrichment } from '../services/pokeapi';
   import { getSpritePath } from '../utils/paths';
+  import { playCry } from '../services/sound';
 
   const pokemonId = getSelectedPokemonId();
   const pokemon = pokemonId ? getPokemon(pokemonId) : undefined;
@@ -12,6 +13,12 @@
   let loading = $state(false);
 
   onMount(async () => {
+    // Play cry when detail view opens (only for caught Pokemon)
+    if (pokemonId && pokemon?.caught) {
+      playCry(pokemonId);
+    }
+
+    // Fetch enrichment data if online
     if (!pokemonId || !pokemon?.caught || !isOnline()) return;
 
     loading = true;
