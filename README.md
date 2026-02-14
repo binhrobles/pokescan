@@ -1,6 +1,36 @@
-# Svelte + TS + Vite
+# PokéScan
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+A mobile-first PWA Pokédex that scans QR codes to "catch" the original 151 Pokémon.
+
+## Development
+
+```bash
+yarn dev       # Start dev server
+yarn build     # Production build
+yarn preview   # Preview production build
+yarn check     # TypeScript + Svelte type checking
+```
+
+## Deployment
+
+This project is configured to deploy to GitHub Pages automatically on every push to `main`.
+
+### Automatic Deployment (via GitHub Actions)
+
+1. Enable GitHub Pages in your repository settings:
+   - Go to Settings → Pages
+   - Set Source to "GitHub Actions"
+2. Push to `main` branch
+3. GitHub Actions will automatically build and deploy
+4. Your site will be available at: https://binhrobles.github.io/pokescan/
+
+### Manual Deployment
+
+```bash
+yarn deploy
+```
+
+This will build the project and push to the `gh-pages` branch.
 
 ## Recommended IDE Setup
 
