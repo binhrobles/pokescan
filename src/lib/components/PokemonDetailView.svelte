@@ -201,14 +201,13 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: transparent;
     flex-shrink: 0;
   }
 
   .line {
     flex: 1;
     height: 2px;
-    background-color: var(--screen-text);
+    background-color: transparent;
   }
 
   /* Description Section (bottom half) */

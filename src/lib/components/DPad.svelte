@@ -93,8 +93,14 @@
   .left { grid-area: left; border-radius: 6px 0 0 6px; }
   .right { grid-area: right; border-radius: 0 6px 6px 0; }
 
-  /* Up and Down arrows - less pronounced depth */
-  .up .arrow,
+  /* Up arrow - reduce visual prominence */
+  .up .arrow {
+    position: relative;
+    top: -2px;
+    opacity: 0.85;
+  }
+
+  /* Down arrow - subtle adjustment */
   .down .arrow {
     position: relative;
     top: -1px;
