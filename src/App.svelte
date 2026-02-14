@@ -6,7 +6,7 @@
   import PokemonDetailView from './lib/components/PokemonDetailView.svelte';
   import PokedexView from './lib/components/PokedexView.svelte';
   import AboutView from './lib/components/AboutView.svelte';
-  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode } from './lib/stores/navigation.svelte';
+  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode, setGridCursor } from './lib/stores/navigation.svelte';
   import { loadPokedex, recordCatch, getCaughtIds, findPokemonByBarcode } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
   import type { InputAction } from './lib/types/pokemon';
@@ -47,8 +47,11 @@
     // Clear detected barcode
     setScannerDetectedBarcode(null);
 
-    // Navigate to detail view (even if already caught)
-    goToDetail(pokemonId, 'scanner');
+    // Set grid cursor to the caught Pokemon's position (0-indexed)
+    setGridCursor(pokemonId - 1);
+
+    // Navigate to detail view, return to pokedex when pressing B
+    goToDetail(pokemonId, 'pokedex');
   }
 </script>
 

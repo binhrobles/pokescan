@@ -100,6 +100,11 @@ export function setGridColumns(cols: number): void {
   gridColumns = cols;
 }
 
+/** Set grid cursor position (for scrolling to specific Pokemon) */
+export function setGridCursor(index: number): void {
+  gridCursor = Math.max(0, Math.min(150, index));
+}
+
 /** Navigate directly to detail view (used by catch flow) */
 export function goToDetail(pokemonId: number, returnTo: ViewState = 'menu'): void {
   selectedPokemonId = pokemonId;
