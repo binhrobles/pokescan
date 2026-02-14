@@ -28,7 +28,6 @@ let menuCursor: number = $state(0);
 let gridCursor: number = $state(0);
 let gridColumns: number = $state(5); // Updated dynamically by grid view
 let scannerDetectedBarcode: string | null = $state(null); // Pending barcode awaiting confirmation
-let scannerTriggerCatch: boolean = $state(false); // Trigger catch animation
 
 /** Process a d-pad or button input */
 export function dispatch(action: InputAction): void {
@@ -37,10 +36,7 @@ export function dispatch(action: InputAction): void {
       handleMenu(action);
       break;
     case 'scanner':
-      if (action === 'a-button' && scannerDetectedBarcode) {
-        // Trigger catch animation
-        scannerTriggerCatch = true;
-      } else if (action === 'b-button') {
+      if (action === 'b-button') {
         scannerDetectedBarcode = null; // Clear detected barcode when going back
         currentView = 'menu';
       }
@@ -140,10 +136,3 @@ export function getScannerDetectedBarcode(): string | null {
   return scannerDetectedBarcode;
 }
 
-export function getScannerTriggerCatch(): boolean {
-  return scannerTriggerCatch;
-}
-
-export function resetScannerTriggerCatch(): void {
-  scannerTriggerCatch = false;
-}

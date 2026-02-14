@@ -5,10 +5,9 @@
   interface ScannerViewProps {
     onDetect: (barcodeContent: string) => void;
     onCatch: () => void;
-    shouldCatch: boolean;
   }
 
-  let { onDetect, onCatch, shouldCatch }: ScannerViewProps = $props();
+  let { onDetect, onCatch }: ScannerViewProps = $props();
 
   let videoElement: HTMLVideoElement | undefined = $state();
   let scanner: QrScanner | undefined = $state();
@@ -18,22 +17,7 @@
   let hasCamera = $state(false);
   let cameraReady = $state(false);
   let detectionTimeout: number | undefined;
-  let previousShouldCatch = false;
-
-  // Watch for catch trigger
-  $effect(() => {
-    if (shouldCatch && !previousShouldCatch) {
-      // Start catch animation
-      catching = true;
-
-      // After animation completes (600ms), call onCatch
-      setTimeout(() => {
-        catching = false;
-        onCatch();
-      }, 600);
-    }
-    previousShouldCatch = shouldCatch;
-  });
+  let autoCatchTimeout: number | undefined;
 
   onMount(async () => {
     if (!videoElement) {
@@ -52,9 +36,12 @@
           detected = true;
           onDetect(result.data);
 
-          // Clear any existing timeout
+          // Clear any existing timeouts
           if (detectionTimeout) {
             clearTimeout(detectionTimeout);
+          }
+          if (autoCatchTimeout) {
+            clearTimeout(autoCatchTimeout);
           }
 
           // Set timeout to clear detection if barcode moves out of view
@@ -62,6 +49,18 @@
             detected = false;
             onDetect(''); // Clear detected barcode
           }, 500) as unknown as number;
+
+          // Auto-catch after delay (enough time to see the red pokeball animation)
+          autoCatchTimeout = setTimeout(() => {
+            // Start catch animation
+            catching = true;
+
+            // After animation completes (600ms), call onCatch
+            setTimeout(() => {
+              catching = false;
+              onCatch();
+            }, 600);
+          }, 800) as unknown as number;
         },
         {
           returnDetailedScanResult: true,
@@ -96,6 +95,9 @@
   onDestroy(() => {
     if (detectionTimeout) {
       clearTimeout(detectionTimeout);
+    }
+    if (autoCatchTimeout) {
+      clearTimeout(autoCatchTimeout);
     }
     scanner?.stop();
     scanner?.destroy();

@@ -6,7 +6,7 @@
   import PokemonDetailView from './lib/components/PokemonDetailView.svelte';
   import PokedexView from './lib/components/PokedexView.svelte';
   import AboutView from './lib/components/AboutView.svelte';
-  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode, getScannerTriggerCatch, resetScannerTriggerCatch } from './lib/stores/navigation.svelte';
+  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode } from './lib/stores/navigation.svelte';
   import { loadPokedex, recordCatch, getCaughtIds, findPokemonByBarcode } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
   import type { InputAction } from './lib/types/pokemon';
@@ -44,8 +44,7 @@
       }
     }
 
-    // Reset catch trigger and clear detected barcode
-    resetScannerTriggerCatch();
+    // Clear detected barcode
     setScannerDetectedBarcode(null);
 
     // Navigate to detail view (even if already caught)
@@ -57,7 +56,7 @@
   {#if getView() === 'menu'}
     <MenuView />
   {:else if getView() === 'scanner'}
-    <ScannerView onDetect={handleDetect} onCatch={handleCatch} shouldCatch={getScannerTriggerCatch()} />
+    <ScannerView onDetect={handleDetect} onCatch={handleCatch} />
   {:else if getView() === 'pokedex'}
     <PokedexView />
   {:else if getView() === 'pokemon-detail'}
