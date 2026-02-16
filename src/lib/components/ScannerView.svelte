@@ -40,11 +40,8 @@
         cameraReady = true;
       }, 200);
 
-      // Create barcode detector with multiple format support
-      const supportedFormats = await BarcodeDetector.getSupportedFormats();
-      const detector = new BarcodeDetector({
-        formats: supportedFormats
-      });
+      // Create barcode detector with all formats supported
+      const detector = new BarcodeDetector();
 
       // Scan for barcodes every 200ms
       scanInterval = setInterval(async () => {
