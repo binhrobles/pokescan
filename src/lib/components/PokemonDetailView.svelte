@@ -67,11 +67,9 @@
         </div>
       </div>
 
-      <!-- Divider with ornamental circles -->
+      <!-- Divider -->
       <div class="divider">
-        <div class="circle"></div>
         <div class="line"></div>
-        <div class="circle"></div>
       </div>
 
       <!-- Description section -->
@@ -156,6 +154,7 @@
   .number {
     font-size: 9px;
     line-height: 1.2;
+    margin-left: 4px;
     opacity: 0.8;
   }
 
@@ -170,6 +169,7 @@
   .stats-top {
     display: flex;
     flex-direction: column;
+    margin-top: 15px;
     gap: 2px;
   }
 
@@ -194,19 +194,12 @@
     line-height: 1.3;
   }
 
-  /* Divider with ornamental circles */
+  /* Divider */
   .divider {
     display: flex;
     align-items: center;
     gap: 6px;
     padding: 8px 0;
-  }
-
-  .circle {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
   }
 
   .line {
@@ -221,6 +214,7 @@
     display: flex;
     align-items: flex-start;
     padding-top: 8px;
+    margin-left: 4px;
   }
 
   .description {
