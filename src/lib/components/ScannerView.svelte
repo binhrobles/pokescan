@@ -41,19 +41,9 @@
       }, 200);
 
       // Create barcode detector with multiple format support
+      const supportedFormats = await BarcodeDetector.getSupportedFormats();
       const detector = new BarcodeDetector({
-        formats: [
-          'qr_code',
-          'ean_13',
-          'ean_8',
-          'upc_a',
-          'upc_e',
-          'code_128',
-          'code_39',
-          'code_93',
-          'codabar',
-          'itf',
-        ],
+        formats: supportedFormats
       });
 
       // Scan for barcodes every 200ms
