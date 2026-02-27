@@ -30,6 +30,7 @@ let gridCursor: number = $state(0);
 let gridColumns: number = $state(5); // Updated dynamically by grid view
 let listCursor: number = $state(0);
 let scannerDetectedBarcode: string | null = $state(null); // Pending barcode awaiting confirmation
+let catchAnimConfirmed: boolean = $state(false); // A-button pressed during catch animation
 
 /** Process a d-pad or button input */
 export function dispatch(action: InputAction): void {
@@ -45,6 +46,11 @@ export function dispatch(action: InputAction): void {
       break;
     case 'pokedex':
       handlePokedexGrid(action);
+      break;
+    case 'catch-animation':
+      if (action === 'a-button') {
+        catchAnimConfirmed = true;
+      }
       break;
     case 'pokemon-detail':
       if (action === 'a-button' && selectedPokemonId) {
@@ -115,6 +121,22 @@ export function goToDetail(pokemonId: number, returnTo: ViewState = 'menu'): voi
   selectedPokemonId = pokemonId;
   detailReturnTo = returnTo;
   currentView = 'pokemon-detail';
+}
+
+/** Navigate to catch animation (used after barcode catch) */
+export function goToCatchAnimation(pokemonId: number): void {
+  selectedPokemonId = pokemonId;
+  detailReturnTo = 'pokedex';
+  catchAnimConfirmed = false;
+  currentView = 'catch-animation';
+}
+
+export function getCatchAnimConfirmed(): boolean {
+  return catchAnimConfirmed;
+}
+
+export function resetCatchAnimConfirmed(): void {
+  catchAnimConfirmed = false;
 }
 
 // --- Read-only accessors (reactive via $state) ---

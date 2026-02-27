@@ -62,16 +62,16 @@
 
             // Auto-catch after delay (enough time to see the red pokeball animation)
             autoCatchTimeout = setTimeout(() => {
-              // Start catch animation
+              // Start catch sequence — fade camera to black
               catching = true;
 
-              // After animation completes (600ms), call onCatch
+              // After fade to black completes, trigger catch
               setTimeout(() => {
                 catching = false;
                 detected = false;
                 catchInProgress = false;
                 onCatch();
-              }, 600);
+              }, 1000);
             }, 800) as unknown as number;
           }
         } catch {
@@ -124,6 +124,9 @@
     </div>
   {/if}
   <video bind:this={videoElement} class="video-feed" class:ready={cameraReady} playsinline></video>
+  {#if catching}
+    <div class="catch-overlay"></div>
+  {/if}
   <div class="pokeball-overlay" class:detected class:catching class:ready={cameraReady}>
     <div class="top-half"></div>
     <div class="divider-line"></div>
@@ -152,6 +155,23 @@
     opacity: 1;
   }
 
+  .catch-overlay {
+    position: absolute;
+    inset: 0;
+    background: black;
+    z-index: 1;
+    animation: fadeToBlack 1s ease-in forwards;
+  }
+
+  @keyframes fadeToBlack {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   .pokeball-overlay {
     position: absolute;
     top: 50%;
@@ -166,6 +186,7 @@
     transition: all 0.2s ease-out;
     overflow: hidden;
     opacity: 0;
+    z-index: 2;
   }
 
   .pokeball-overlay.ready {

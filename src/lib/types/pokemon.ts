@@ -21,6 +21,7 @@ export interface CatchRecord {
 export type ViewState =
   | 'menu'
   | 'scanner'
+  | 'catch-animation'
   | 'pokemon-detail'
   | 'pokedex'
   | 'about';

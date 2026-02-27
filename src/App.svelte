@@ -3,10 +3,11 @@
   import PokedexShell from './lib/components/PokedexShell.svelte';
   import MenuView from './lib/components/MenuView.svelte';
   import ScannerView from './lib/components/ScannerView.svelte';
+  import CatchAnimationView from './lib/components/CatchAnimationView.svelte';
   import PokemonDetailView from './lib/components/PokemonDetailView.svelte';
   import PokedexView from './lib/components/PokedexView.svelte';
   import AboutView from './lib/components/AboutView.svelte';
-  import { dispatch, getView, goToDetail, setScannerDetectedBarcode, getScannerDetectedBarcode, setGridCursor } from './lib/stores/navigation.svelte';
+  import { dispatch, getView, goToCatchAnimation, setScannerDetectedBarcode, getScannerDetectedBarcode, setGridCursor } from './lib/stores/navigation.svelte';
   import { loadPokedex, recordCatch, getCaughtIds, findPokemonByBarcode } from './lib/stores/pokedex.svelte';
   import { barcodeToPokemon } from './lib/services/heuristic';
   import { initAudio } from './lib/services/sound';
@@ -54,8 +55,8 @@
     // Set grid cursor to the caught Pokemon's position (0-indexed)
     setGridCursor(pokemonId - 1);
 
-    // Navigate to detail view, return to pokedex when pressing B
-    goToDetail(pokemonId, 'pokedex');
+    // Navigate to catch animation, which will transition to detail view
+    goToCatchAnimation(pokemonId);
   }
 </script>
 
@@ -64,6 +65,8 @@
     <MenuView />
   {:else if getView() === 'scanner'}
     <ScannerView onDetect={handleDetect} onCatch={handleCatch} />
+  {:else if getView() === 'catch-animation'}
+    <CatchAnimationView />
   {:else if getView() === 'pokedex'}
     <PokedexView />
   {:else if getView() === 'pokemon-detail'}
