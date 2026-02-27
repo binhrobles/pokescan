@@ -335,8 +335,7 @@
 
   .loading-text {
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    color: var(--screen-text);
     animation: blink 1s ease-in-out infinite;
   }
 
