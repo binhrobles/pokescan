@@ -130,7 +130,7 @@
       class:revealed={spriteRevealed}
     >
       {#if showText}
-        <div class="banner">You caught</div>
+        <div class="banner">YOU CAUGHT</div>
       {/if}
       <img
         src={getSpritePath(pokemon.sprite)}
