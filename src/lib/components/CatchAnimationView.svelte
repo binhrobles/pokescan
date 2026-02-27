@@ -44,6 +44,7 @@
   const spriteRevealed = $derived(
     phase === 'reveal' || phase === 'waiting' || phase === 'drop',
   );
+  const showText = $derived(phase === 'waiting' || phase === 'drop');
 
   function schedule(fn: () => void, delay: number) {
     timeouts.push(setTimeout(fn, delay) as unknown as number);
@@ -129,11 +130,17 @@
       class:revealed={spriteRevealed}
       class:drop={phase === 'drop'}
     >
+      {#if showText}
+        <div class="banner">You caught</div>
+      {/if}
       <img
         src={getSpritePath(pokemon.sprite)}
         alt={pokemon.name}
         class="sprite"
       />
+      {#if showText}
+        <div class="pokemon-name">{pokemon.name.toUpperCase()}</div>
+      {/if}
     </div>
   {/if}
 </div>
@@ -252,8 +259,9 @@
   /* Sprite */
   .sprite-wrap {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 12px;
     animation: spriteAppear 0.8s ease-in forwards;
     transition: transform 0.5s ease-in;
   }
@@ -274,12 +282,35 @@
     filter: brightness(1);
   }
 
+  .banner {
+    font-size: 10px;
+    color: var(--screen-text);
+    animation: textFadeIn 0.6s ease-out forwards;
+  }
+
+  .pokemon-name {
+    font-size: 13px;
+    color: var(--screen-text);
+    animation: textFadeIn 0.6s ease-out forwards;
+  }
+
   @keyframes spriteAppear {
     from {
       opacity: 0;
     }
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes textFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>
