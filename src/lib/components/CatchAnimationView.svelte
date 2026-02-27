@@ -17,7 +17,7 @@
     | 'silhouette'
     | 'reveal'
     | 'waiting'
-    | 'drop';
+    | 'wipe';
 
   let phase = $state<Phase>('pokeball');
   const timeouts: number[] = [];
@@ -33,18 +33,18 @@
       phase === 'silhouette' ||
       phase === 'reveal' ||
       phase === 'waiting' ||
-      phase === 'drop',
+      phase === 'wipe',
   );
   const showSprite = $derived(
     phase === 'silhouette' ||
       phase === 'reveal' ||
       phase === 'waiting' ||
-      phase === 'drop',
+      phase === 'wipe',
   );
   const spriteRevealed = $derived(
-    phase === 'reveal' || phase === 'waiting' || phase === 'drop',
+    phase === 'reveal' || phase === 'waiting' || phase === 'wipe',
   );
-  const showText = $derived(phase === 'waiting' || phase === 'drop');
+  const showText = $derived(phase === 'waiting' || phase === 'wipe');
 
   function schedule(fn: () => void, delay: number) {
     timeouts.push(setTimeout(fn, delay) as unknown as number);
@@ -95,12 +95,12 @@
     if (confirmed) {
       resetCatchAnimConfirmed();
       if (phase === 'waiting') {
-        phase = 'drop';
+        phase = 'wipe';
         schedule(() => {
           if (pokemonId) {
             goToDetail(pokemonId, 'pokedex');
           }
-        }, 600);
+        }, 500);
       }
     }
   });
@@ -128,7 +128,6 @@
     <div
       class="sprite-wrap"
       class:revealed={spriteRevealed}
-      class:drop={phase === 'drop'}
     >
       {#if showText}
         <div class="banner">You caught</div>
@@ -142,6 +141,10 @@
         <div class="pokemon-name">{pokemon.name.toUpperCase()}</div>
       {/if}
     </div>
+  {/if}
+
+  {#if phase === 'wipe'}
+    <div class="screen-wipe"></div>
   {/if}
 </div>
 
@@ -263,11 +266,24 @@
     align-items: center;
     gap: 12px;
     animation: spriteAppear 0.8s ease-in forwards;
-    transition: transform 0.5s ease-in;
   }
 
-  .sprite-wrap.drop {
-    transform: translateY(200%);
+  /* Screen wipe — classic Game Boy transition */
+  .screen-wipe {
+    position: absolute;
+    inset: 0;
+    background: var(--screen-bg-dark, #0f380f);
+    z-index: 10;
+    animation: wipeDown 0.4s ease-in forwards;
+  }
+
+  @keyframes wipeDown {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
   }
 
   .sprite {
