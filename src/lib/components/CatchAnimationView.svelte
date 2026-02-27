@@ -17,7 +17,8 @@
     | 'silhouette'
     | 'reveal'
     | 'waiting'
-    | 'wipe';
+    | 'wipe-black'
+    | 'wipe-green';
 
   let phase = $state<Phase>('pokeball');
   const timeouts: number[] = [];
@@ -33,18 +34,20 @@
       phase === 'silhouette' ||
       phase === 'reveal' ||
       phase === 'waiting' ||
-      phase === 'wipe',
+      phase === 'wipe-black' ||
+      phase === 'wipe-green',
   );
   const showSprite = $derived(
     phase === 'silhouette' ||
       phase === 'reveal' ||
       phase === 'waiting' ||
-      phase === 'wipe',
+      phase === 'wipe-black' ||
+      phase === 'wipe-green',
   );
   const spriteRevealed = $derived(
-    phase === 'reveal' || phase === 'waiting' || phase === 'wipe',
+    phase === 'reveal' || phase === 'waiting' || phase === 'wipe-black' || phase === 'wipe-green',
   );
-  const showText = $derived(phase === 'waiting' || phase === 'wipe');
+  const showText = $derived(phase === 'waiting' || phase === 'wipe-black' || phase === 'wipe-green');
 
   function schedule(fn: () => void, delay: number) {
     timeouts.push(setTimeout(fn, delay) as unknown as number);
@@ -95,12 +98,18 @@
     if (confirmed) {
       resetCatchAnimConfirmed();
       if (phase === 'waiting') {
-        phase = 'wipe';
+        // Stage 1: black curtain wipes down
+        phase = 'wipe-black';
+        // Stage 2: green curtain wipes down over the black
+        schedule(() => {
+          phase = 'wipe-green';
+        }, 500);
+        // Navigate after green wipe completes
         schedule(() => {
           if (pokemonId) {
             goToDetail(pokemonId, 'pokedex');
           }
-        }, 500);
+        }, 1000);
       }
     }
   });
@@ -143,8 +152,11 @@
     </div>
   {/if}
 
-  {#if phase === 'wipe'}
-    <div class="screen-wipe"></div>
+  {#if phase === 'wipe-black' || phase === 'wipe-green'}
+    <div class="screen-wipe screen-wipe-black"></div>
+  {/if}
+  {#if phase === 'wipe-green'}
+    <div class="screen-wipe screen-wipe-green"></div>
   {/if}
 </div>
 
@@ -268,13 +280,21 @@
     animation: spriteAppear 0.8s ease-in forwards;
   }
 
-  /* Screen wipe — classic Game Boy transition */
+  /* Screen wipe — two-stage curtain transition */
   .screen-wipe {
     position: absolute;
     inset: 0;
-    background: var(--screen-bg-dark, #0f380f);
-    z-index: 10;
     animation: wipeDown 0.4s ease-in forwards;
+  }
+
+  .screen-wipe-black {
+    background: black;
+    z-index: 10;
+  }
+
+  .screen-wipe-green {
+    background: var(--screen-bg, #9bbc0f);
+    z-index: 11;
   }
 
   @keyframes wipeDown {
