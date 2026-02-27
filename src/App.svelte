@@ -14,9 +14,25 @@
   import type { InputAction } from './lib/types/pokemon';
 
   // Initialize pokedex store on mount
-  onMount(async () => {
-    await loadPokedex();
+  onMount(() => {
+    loadPokedex();
+
+    // Debug: press 'C' to trigger catch with a random barcode
+    window.addEventListener('keydown', handleDebugKey);
+    return () => window.removeEventListener('keydown', handleDebugKey);
   });
+
+  async function handleDebugKey(e: KeyboardEvent) {
+    if (e.key !== 'c' && e.key !== 'C') return;
+    const fakeBarcodeContent = `debug-${Date.now()}-${Math.random()}`;
+    const pokemonId = barcodeToPokemon(fakeBarcodeContent);
+    const caughtIds = getCaughtIds();
+    if (!caughtIds.has(pokemonId)) {
+      await recordCatch(pokemonId, fakeBarcodeContent);
+    }
+    setGridCursor(pokemonId - 1);
+    goToCatchAnimation(pokemonId);
+  }
 
   function handleInput(action: InputAction) {
     // Initialize audio on first user interaction
